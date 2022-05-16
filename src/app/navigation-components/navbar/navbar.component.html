@@ -1,0 +1,84 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark col-lg-12">
+  
+    <div class="container-fluid">
+      <a [routerLink]="['products']" class="navbar-brand me-2">
+        <img
+          src="../../assets/logo_transparent.png"
+          height="16"
+          alt="MDB Logo"
+          loading="lazy"
+          style="margin-top: -1px;"
+        />
+      </a>
+
+      
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" [routerLink]="['products']">🖥 Products</a>
+          </li>
+
+          <li (click)="refreshNavbar()" class="nav-item dropdown">
+            <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              🔍 Producers
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li *ngFor = "let producer of producers" ><a class="dropdown-item" [routerLink]="['products/producer/'+producer]" >{{producer | titlecase}}</a></li>
+            </ul>
+          </li>
+          <li (click)="refreshNavbar()" class="nav-item  dropdown">
+            <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              🔍 Categories
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li *ngFor = "let category of categories"><a class="dropdown-item" [routerLink]="['products/category/'+category]" >{{category | titlecase}}</a></li>
+            </ul>
+          </li>
+
+          <li *ngIf="!this.auth.isLogged" class="nav-item">
+            <a  style="color:rgb(0, 115, 255);"class="nav-link active" aria-current="page" [routerLink]="['auth']">
+              👤 Login
+            </a>
+
+          <li *ngIf="this.auth.isLogged && this.auth.analyzeToken?.isAdmin" class="nav-item dropdown">
+            <a style="color:red;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              ♔ ADMIN: {{auth.analyzeToken?.email}}
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a style="color:red;" class="dropdown-item" [routerLink]="['grant_permissions']" >🔝Grant permissions to user</a></li>
+              <li><a style="color:red;" class="dropdown-item" [routerLink]="['edit_db']" >✏ Edit database</a></li>
+              <li><a class="dropdown-item" [routerLink]="['orders']" >🕚Order History</a></li>
+              <li><a (click)="logOut()" class="dropdown-item" [routerLink]="['']" >⬅ Logout</a></li>
+            </ul>
+          </li>
+
+          <li *ngIf="this.auth.isLogged && this.auth.analyzeToken?.isAdmin!=true" class="nav-item dropdown">
+            <a style="color:rgb(0, 115, 255);" class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              👤 {{auth.analyzeToken?.email}}
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" [routerLink]="['orders']" >🕚Order History</a></li>
+              <li><a (click)="logOut()" class="dropdown-item" [routerLink]="['']" >⬅Logout</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" [routerLink]="['cart']"> 🛒 Cart </a>
+          </li>
+        </ul>
+        <form class="d-flex">
+          <input *ngIf="router.url.includes('products') && !router.url.includes('products/product')" class="form-control me-2" name="search" aria-label="Search" placeholder="🔍 Search... " [(ngModel)]="this.shop.searchTerm" >
+        </form>
+
+        
+
+        
+        
+      </div>
+    </div>
+  </nav>

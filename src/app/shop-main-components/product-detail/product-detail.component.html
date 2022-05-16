@@ -1,0 +1,135 @@
+
+<div >
+<div class="row main">
+
+
+    <div class="jumbo_left jumbotron col-sm-12 col-lg-6 col-xl-6 col-md-6">
+        <h1 class="prod_h1">{{product?.title}}</h1>
+        <p class="prod_dex">{{product?.description}}</p>
+        <p class="prod_btn"><button  *ngIf="!isInCart(id) && product" (click)="addInCart(product.id)" [disabled]="!this.auth.isLogged" class="btn btn-primary btn-lg" href="#" role="button">🛒 Add to cart <span *ngIf="!this.auth.isLogged"> disabled: Please Login</span></button></p>
+        <p class="prod_btn"><button  *ngIf="isInCart(id) && product" (click)="removeElement(id)" [disabled]="!this.auth.isLogged" class="btn btn-primary btn-lg" href="#" role="button">🛒 Remove from cart </button></p>
+         
+      </div>
+
+
+      <div class="jumbo_right jumbotron col-sm-12 col-lg-6 col-xl-6 col-md-6" >
+        <img class="prod_img" src="{{product?.image}}"/>
+    </div>
+
+    </div>
+
+
+
+  <div class="row d-flex justify-content-center">
+    <div class="review row">
+      <div class="score_div">
+        <div class="score">
+          <h1 class="score_t">{{valutation | number:'1.0-1'}}</h1>
+          <p class="score_p">out of 5</p>
+        </div>
+      </div>
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-0 border" style="background-color: #f0f2f5;">
+        <div class="card-body p-4">
+
+          <form class="form-outline mb-4">
+            <input [(ngModel)]="currentValutation.nickname" name="nickname" [disabled]="!this.auth.isLogged"
+              type="text"
+              id="addANote"
+              class="form-control"
+              placeholder="Username, if empty Anonymous"
+            />
+            <input [(ngModel)]="currentValutation.comment" name="description" [disabled]="!this.auth.isLogged"
+              type="text"
+              id="addANote"
+              class="form-control"
+              placeholder="Type comment..."
+            />
+            <div class="valutation" *ngIf="currentValutation.star==0">
+            <button type="button" (click)="currentValutation.star=1" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=2" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=3" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=4" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=5" class="btn btn-outline-warning">⭐</button>
+            </div>
+
+            <div class="valutation" *ngIf="currentValutation.star==1">
+            <button type="button" (click)="currentValutation.star=1" style = "background-color: orange; color: white;" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=2" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=3" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=4" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=5" class="btn btn-outline-warning">⭐</button>
+            </div>
+
+            <div class="valutation" *ngIf="currentValutation.star==2">
+            <button type="button" (click)="currentValutation.star=1" style = "background-color: orange; color: white;" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=2" style = "background-color: orange; color: white;" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=3" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=4" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=5" class="btn btn-outline-warning">⭐</button>
+            </div>
+
+            <div class="valutation" *ngIf="currentValutation.star==3">
+            <button type="button" (click)="currentValutation.star=1" style = "background-color: orange; color: white;" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=2" style = "background-color: orange; color: white;" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=3" style = "background-color: orange; color: white;" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=4" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=5" class="btn btn-outline-warning">⭐</button>
+            </div>
+
+            <div class="valutation" *ngIf="currentValutation.star==4">
+            <button type="button" (click)="currentValutation.star=1" style = "background-color: orange; color: white;" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=2" style = "background-color: orange; color: white;" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=3" style = "background-color: orange; color: white;" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=4" style = "background-color: orange; color: white;" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=5" class="btn btn-outline-warning">⭐</button>
+            </div>
+
+            <div class="valutation" *ngIf="currentValutation.star==5">
+            <button type="button" (click)="currentValutation.star=1" style = "background-color: orange; color: white;" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=2" style = "background-color: orange; color: white;" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=3" style = "background-color: orange; color: white;" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=4" style = "background-color: orange; color: white;" class="btn btn-outline-warning">⭐</button>
+            <button type="button" (click)="currentValutation.star=5" style = "background-color: orange; color: white;" class="btn btn-outline-warning">⭐</button>
+            </div>
+
+            <div class="valutation">
+            <button (click)="addReview()" [disabled]="!this.auth.isLogged || currentValutation.star==0" class="btn btn-primary">Add a valutation <span *ngIf="!this.auth.isLogged"> disabled: Please Login</span></button>
+            </div>
+          </form>
+
+          
+  
+          <div *ngFor="let valutation of product?.valutations" class="card mb-4">
+            <div class="card-body">
+              <p>{{valutation.comment}}</p>
+  
+              <div class="d-flex justify-content-between">
+                <div class="d-flex flex-row align-items-center">
+                  <img
+                    src="../../../assets/usericon.png"
+                    alt="avatar"
+                    width="25"
+                    height="25"
+                  />
+                  <p class="small mb-0 ms-2">{{valutation.nickname}}</p>
+                </div>
+                <div class="d-flex flex-row align-items-center">
+                  <p class="small text-muted mb-0">{{valutation.star}}</p>
+                  <i
+                    class="far fa-thumbs-up mx-2 fa-xs text-black"
+                    style="margin-top: -0.16rem;"
+                  ></i>
+                  <p class="small text-muted mb-0">★</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

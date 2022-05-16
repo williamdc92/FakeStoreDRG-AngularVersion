@@ -1,0 +1,28 @@
+<div class="container">
+
+  <div class="product-card row main">
+  <ng-template  #loading>
+  <div class="loading">
+  <mat-spinner></mat-spinner>
+  </div>
+  </ng-template>
+  
+
+  <ng-template #empty>
+      
+  <div class="noresults">
+  <img class="noresults-img" src="../../../assets/No-Results-Found.png">
+  </div>
+
+  </ng-template>
+
+      <ng-container *ngIf="( products$ | async | filter : this.shop.searchTerm) as result; else loading">
+          <div *ngIf="(result.length>0) else empty">
+            <product-list [result]="result"></product-list>
+          </div>
+      </ng-container>
+
+
+  </div>
+
+</div>

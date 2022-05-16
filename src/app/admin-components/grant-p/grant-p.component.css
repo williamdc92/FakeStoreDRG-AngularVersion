@@ -1,0 +1,40 @@
+.loading {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:100vw;
+  height:100vh;
+}
+
+  .tab_drg {
+    padding: 5rem;
+  }
+
+  .main {
+    height: 100vh;
+  }
+
+  button.btn.btn-sm.btn-primary {
+    width: 115px;
+}
+
+button.btn.btn-sm.btn-warning {
+  width: 115px;
+}
+
+td.text-nowrap.text-center {
+  margin-top: 5.5px !important;
+  display:flex;
+  justify-content: center;
+}
+
+/* ----------col Extra Small----------*/
+
+@media screen and (max-width: 575px) {
+ 
+  .tab_drg {
+    padding: 1rem;
+  }
+
+}
+

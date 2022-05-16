@@ -1,0 +1,41 @@
+
+<ng-container *ngIf="product as singleproduct">
+
+<div class="row p-2 bg-white border rounded">
+<div class="col-md-3 mt-1 img-card"><img class="img-fluid img-responsive rounded product-image"
+    [src]=singleproduct.image></div>
+<div class="col-md-6 mt-1">
+<h5>{{singleproduct.title}}</h5>
+<div class="d-flex flex-row">
+    <div class="ratings mr-2"><i class="fa fa-star"></i><i class="fa fa-star"></i><i
+            class="fa fa-star"></i><i class="fa fa-star"></i></div>
+</div>
+<div class="mt-1 mb-1 spec-1"><span>Category: </span><span
+        class="dot"></span><span>{{singleproduct.category}}</span></div>
+<p class="text-justify text-truncate para mb-0">{{singleproduct.description}}<br><br></p>
+</div>
+<div class="align-items-center align-content-center col-md-3 border-left mt-1">
+<div class="d-flex flex-row align-items-center">
+    <h4 class="mr-1">€ {{singleproduct.price}}</h4>
+</div>
+<h6 class="text-success">{{singleproduct.producer}}</h6>
+
+<h6 class="star">
+    <div *ngFor="let star of currentValutation(singleproduct.valutations)">🌟</div>
+</h6>
+<div class="d-flex flex-column mt-4">
+    <button class="btn btn-primary btn-sm" type="button"
+        [routerLink]="['/products/product/'+singleproduct.id]">Details</button>
+    <button *ngIf="!isInCart" (click)="onAddinCart(singleproduct.id)"
+        [disabled]="!this.auth.isLogged" class="btn btn-outline-primary btn-sm mt-2"
+        type="button">🛒 Add to cart <span *ngIf="!this.auth.isLogged"> disabled: Please
+            Login</span></button>
+    <button *ngIf="isInCart" (click)="onRemoveFromCart(singleproduct.id)"
+        [disabled]="!this.auth.isLogged" class="btn btn-outline-primary btn-sm mt-2"
+        type="button">🛒 Remove from cart <span *ngIf="!this.auth.isLogged"> disabled:
+            Please Login</span></button>
+</div>
+</div>
+</div>
+
+</ng-container>

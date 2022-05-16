@@ -1,0 +1,8 @@
+p.switch {
+    display: flex !important;
+    justify-content: center !important ;
+}
+
+.login {
+    margin-left: 0.5rem;
+}

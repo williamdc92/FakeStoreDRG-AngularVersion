@@ -1,0 +1,40 @@
+
+<div class="product-card row main">
+  <ng-template #loading>
+  <div class="loading">
+     <mat-spinner></mat-spinner> 
+  </div>
+</ng-template>
+
+
+<div *ngIf="(users$ | async) as users; else loading" class="row flex-lg-nowrap">
+    <div class="col mb-3">
+      <div class="e-panel card">
+          
+          <div class="e-table">
+            <div class="tab_drg main table-responsive table-lg mt-3">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th class="text-center">Name</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let user of users">
+                    <td class="text-nowrap text-center">{{user.email}}</td>
+                    <td class="text-center text-center">
+                      <div class="btn-group align-top">
+                          <button (click)="changeAdminStatus(user.id)" *ngIf="!user.isAdmin" class="btn btn-sm btn-primary">Make Admin</button>
+                          <button [disabled]="user.id==currentId" (click)="changeAdminStatus(user.id)" *ngIf="user.isAdmin" class="btn btn-sm btn-warning">Remove Admin</button>
+                          
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+      </div>
+    </div>
+</div>

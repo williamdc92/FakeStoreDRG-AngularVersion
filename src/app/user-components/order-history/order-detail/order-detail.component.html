@@ -1,0 +1,60 @@
+<div  class="loading">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div >
+    <section class="h-100 gradient-custom">
+        <div class="container py-5 h-100">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-lg-10 col-xl-8">
+              <div class="card" style="border-radius: 10px;">
+                <div class="card-header px-4 py-5">
+                  <h5 class="text-muted mb-0">Thanks for your Order, <span >{{auth.analyzeToken?.email}}</span>!</h5>
+                  <a [routerLink]="['/orders']"><h5 class="text-muted mb-0"> 🔙 Go back to orders </h5></a>
+                  
+
+                </div>
+                <div class="card-body p-4">
+                  <div class="d-flex justify-content-between align-items-center mb-4">
+                    <p class="lead fw-normal mb-0" >Order detail:</p>
+                    <p class="small text-muted mb-0"> date: {{order?.date | date}}</p>
+                  </div>
+
+
+                  <div *ngFor="let product of order?.items" class="card shadow-0 border mb-4">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-2">
+                          <img [src]="product.product.image" class="img-fluid" alt="Phone">
+                        </div>
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                          <p class="text-muted mb-0">{{product.product.title}}</p>
+                        </div>
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                          <p class="text-muted mb-0 small">{{product.product.producer}}</p>
+                        </div>
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                          <p class="text-muted mb-0 small">{{product.product.category}}</p>
+                        </div>
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                          <p class="text-muted mb-0 small">Qty: {{product.quantity}} x </p>
+                        </div>
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                          <p class="text-muted mb-0 small">€ {{product.product.price}}</p>
+                        </div>
+                      </div>
+                     
+                    </div>
+                  </div>
+
+
+                </div>
+                <div class="card-footer border-0 px-4 py-5" style="background-color: rgba(0, 0, 0, 0.79); border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+                  <h5 class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0">Total paid: <span class="h2 mb-0 ms-2"> € {{order?.total}}</span></h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
