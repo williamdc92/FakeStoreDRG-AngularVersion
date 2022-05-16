@@ -31,6 +31,7 @@ import {
   catchError,
   delay,
   finalize,
+  take,
   tap
 } from 'rxjs/operators';
 import {
@@ -47,39 +48,37 @@ import {
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
-  subs = new SubscriptionsContainer;
   products$: Observable<RootObject[]> = new Observable;
   cart: CartElement[] = [];
   constructor(public shop: ShopService, public auth: AuthService, private router: Router, public user: UserService, private toastr: ToastrService, private spinner: SpinnerService) {
 
-    this.subs.add = this.router.events.subscribe((evt) => {
-      if (!(evt instanceof NavigationEnd)) {
-        return;
-      }
-      window.scrollTo(0, 0)
-    });
+    this.router.events.pipe(
+      tap((evt) => {
+        if (!(evt instanceof NavigationEnd)) {
+          return;
+        }
+        window.scrollTo(0, 0)
+      }),
+      take(1)
+    ).subscribe();
   }
 
   ngOnInit(): void {
-    this.getProducts();
-    this.spinner.startLoading();
+    this.products$ = this.getProducts();
   }
 
 
-  getProducts = () => {
-    this.products$ = this.shop.getproducts().pipe(
+  getProducts() : Observable<RootObject[]> {
+    return this.shop.getproducts().pipe(
       catchError(err => {
         console.log(err);
         return of([]);
       }),
-      delay(200),
-    finalize(() => {this.spinner.finishLoading()})
     );
   }
 
 
   ngOnDestroy(): void {
-    this.subs.dispose();
   }
 
 

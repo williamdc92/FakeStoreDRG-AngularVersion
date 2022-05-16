@@ -19,7 +19,6 @@ export class OrderHistoryComponent implements OnInit, OnDestroy {
   constructor( public user: UserService, public auth:AuthService) { }
 
   ngOnInit(): void {
-    console.log("")
     this.orders$ = this.user.getOrders(this.auth.analyzeToken!.user_id).pipe(
       catchError(err => {
         console.log(err);

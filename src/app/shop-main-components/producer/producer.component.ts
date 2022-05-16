@@ -29,7 +29,10 @@ import {
 import {
   catchError,
   Observable,
-  of
+  of,
+  switchMap,
+  take,
+  tap
 } from 'rxjs';
 
 
@@ -40,8 +43,6 @@ import {
 })
 export class ProducerComponent implements OnInit, OnDestroy {
 
-
-  subs = new SubscriptionsContainer;
   producer: string = "";
   products: RootObject[] = [];
   products$: Observable<RootObject[]> = new Observable;
@@ -50,17 +51,25 @@ export class ProducerComponent implements OnInit, OnDestroy {
 
   constructor(public shop: ShopService, public auth: AuthService, private route: ActivatedRoute, public user: UserService, private toastr: ToastrService, private router: Router) {
 
-    this.subs.add = route.params.subscribe(params => {
-      this.producer = params['producer'];
-      this.getProducts();
-    });
+    this.router.events.pipe(
+      tap((evt) => {
+        if (!(evt instanceof NavigationEnd)) {
+          return;
+        }
+        window.scrollTo(0, 0)
+      }),
+      take(1)
+    ).subscribe();
 
-    this.subs.add = this.router.events.subscribe((evt) => {
-      if (!(evt instanceof NavigationEnd)) {
-        return;
-      }
-      window.scrollTo(0, 0)
-    });
+    route.params.pipe(
+      tap((params) => {
+        this.producer = params['producer'];
+      }),
+      switchMap(() => {
+        return this.getProducts();
+      }),
+      take(1)
+    ).subscribe();
   }
 
 
@@ -68,8 +77,8 @@ export class ProducerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
   }
 
-  getProducts = () => {
-    this.products$ = this.shop.getProductsOfProducer(this.producer).pipe(
+  getProducts() : Observable<RootObject[]> {
+   return this.products$ = this.shop.getProductsOfProducer(this.producer).pipe(
       catchError(err => {
         console.log(err);
         return of([]);
@@ -78,7 +87,7 @@ export class ProducerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subs.dispose();
+ 
   }
 
 

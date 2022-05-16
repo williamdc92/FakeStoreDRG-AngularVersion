@@ -54,9 +54,6 @@
                     <button [disabled]="!SignupForm.valid"  (click)="signUp()" type="button" class="btn btn-primary btn-lg">Register</button>
                   </div>
 
-                  
-                    <p class="switch" style="color:red">{{errormessage}}</p>
-                    <p class="switch" style="color:rgb(0, 255, 38)">{{message}}</p>
                     <p class="switch">Already registered? Please <a (click)="login=true" (click)="signup=false" class="login"> Login </a></p>
                 </form>
                 
@@ -103,7 +100,6 @@
                     <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                       <button [disabled]="!LoginForm.valid" (click)="logIn()" class="btn btn-"type="button" class="btn btn-primary btn-lg">Login</button>
                     </div>
-                      <p class="switch" style="color:red">{{errormessage}}</p>
                       <p class="switch">Not registered? Please <a (click)="signup=true" (click)="login=false" class="login"> Signup </a></p>
                   </form>
                   

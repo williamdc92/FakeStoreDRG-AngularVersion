@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UserService, User } from 'src/app/providers/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { SubscriptionsContainer } from 'src/app/subscription-container';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, of, tap, take, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-grant-p',
@@ -12,8 +12,6 @@ import { Observable, catchError, of } from 'rxjs';
 })
 export class GrantPComponent implements OnInit, OnDestroy {
 
-
-  subs = new SubscriptionsContainer();
   users : User[] = [];
   users$ : Observable<User[]> = new Observable;
   currentId = this.auth.analyzeToken?.user_id;
@@ -22,11 +20,10 @@ export class GrantPComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
   this.takeUsers();
-   
   }
 
-  takeUsers = () => {
-    this.users$= this.user.getUsers().pipe(
+  takeUsers() : Observable<User[]> {
+    return this.users$= this.user.getUsers().pipe(
      catchError((err) => {
       console.log(err);
       return of ([]);
@@ -35,23 +32,27 @@ export class GrantPComponent implements OnInit, OnDestroy {
   }
 
   changeAdminStatus = (idu:string) => {
-    this.subs.add = this.user.changeAdminStatus(idu,localStorage.getItem('token')).subscribe({
-      next: () => {
-        this.takeUsers();
+    this.user.changeAdminStatus(idu,localStorage.getItem('token')).pipe(
+      tap(() => {
         this.toastr.success('Admin status changed successfully', 'Success', {
           positionClass:"toast-bottom-left"
         });
-      },
-      error: (err) => {
+      }),
+      catchError(() => {
         this.toastr.error('Cannot change admin status, please try again', 'Error', {
           positionClass:"toast-bottom-left"
         });
-        console.log(err);}
-    })
+        return of ([]);
+      }),
+      switchMap(() => {
+        return this.takeUsers();
+      }),
+      take(1)
+    ).subscribe();
   }
   
   ngOnDestroy(): void {
-      this.subs.dispose();
+ 
   }
 
 }

@@ -1,10 +1,11 @@
 import { SubscriptionsContainer } from './../../subscription-container';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { map } from 'rxjs/operators';
+import { catchError, map, take, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/providers/auth.service';
 import { ShopService } from 'src/app/providers/shop.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router'
+import { Observable, of } from 'rxjs';
 
 
 
@@ -16,9 +17,9 @@ import { Router } from '@angular/router'
 export class NavbarComponent implements OnInit, OnDestroy {
   
   producers: string[] = [];
+  producers$ : Observable<string[]> = new Observable;
   categories: string[] = [];
-  isError: boolean = false;
-  subs = new SubscriptionsContainer;
+
 
 
   constructor(public shop: ShopService, public auth: AuthService, public toastr: ToastrService, public router: Router) { }
@@ -33,34 +34,35 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   }
 
- getProducers = () => {
-  this.subs.add = this.shop.getproducts().pipe(map(product => product.map(product => product.producer))).subscribe({
-    next: (producer) => {
-      this.producers = [...new Set(producer)];
-      this.isError = false;
-    },
-    error: (err) => {
-      this.isError = true;
-      console.error(err.message);
-    }
-  }
-  )
+ getProducers() {
+   return this.shop.getproducts().pipe(
+  map(product => product.map(product => product.producer)),
+  tap((producer) => {
+    this.producers = [... new Set(producer)]
+  }),
+  catchError((err) => {
+    console.log(err)
+    return of ([])
+  }),
+  take(1)
+  ).subscribe();
  }
+
 
  getCategories= () => {
-
-  this.subs.add = this.shop.getproducts().pipe(map(product => product.map(product => product.category))).subscribe({
-    next: (category) => {
-      this.categories = [...new Set(category)];
-      this.isError = false;
-    },
-    error: (err) => {
-      this.isError = true;
-      console.error(err.message);
-    }
-  }
-  )
+   this.shop.getproducts().pipe(
+     map(product => product.map(product => product.category)),
+     tap((category) => {
+       this.categories = [...new Set(category)];
+     }),
+     catchError((err) => {
+      console.log(err)
+      return of ([])
+    }),
+    take(1)
+   ).subscribe();
  }
+
 
  refreshNavbar= () => {
    if (this.shop.dbChange==true) {
@@ -87,7 +89,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   
 
   ngOnDestroy(): void {
-      this.subs.dispose();
+  
   }
 
 

@@ -72,7 +72,6 @@ export interface checkToken {
 
 export class AuthService {
 
-  subs = new SubscriptionsContainer;
   isLogged: boolean | null = false;
   analyzeToken: checkToken | undefined;
   
@@ -115,7 +114,7 @@ export class AuthService {
   }
 
   ngOnDestroy() {
-    this.subs.dispose();
+
   }
 
   signUp = (form: SignUpFormInterface): Observable < Response > => {
@@ -157,28 +156,5 @@ checkTokensExpiration = () => {
 }
  
 }
-
-
-  checkAuthToken = (token: string | null) => {
-    
-      this.subs.add = this.GetMe(localStorage.getItem('token')).subscribe({
-        next: () => {
-          this.isLogged = true;
-          token = localStorage.getItem('token');
-        },
-        error: (error) => {
-         this.toastr.warning('Section expired, please login again', 'Warning', {
-            positionClass: "toast-bottom-left"
-         });
-          localStorage.removeItem('token');
-         token = null;
-         this.analyzeToken = undefined;
-         this.isLogged = false;
-         console.log("error in auth service " + error);
-        }
-      })
-    return token;
-
-  }
 
 }

@@ -1,7 +1,4 @@
 import {
-  SubscriptionsContainer
-} from './../../subscription-container';
-import {
   Component,
   OnInit,
   OnDestroy
@@ -26,10 +23,15 @@ import {
   ToastrService
 } from 'ngx-toastr';
 import {
-  catchError,
   Observable,
   of
-} from 'rxjs';
+} from 'rxjs'
+import {
+  catchError,
+  switchMap,
+  take,
+  tap
+} from 'rxjs/operators';
 
 @Component({
   selector: 'app-category',
@@ -40,35 +42,40 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   category: string = "";
   products: RootObject[] = [];
-  products$: Observable < RootObject[] > = new Observable
+  products$: Observable<RootObject[]> = new Observable
   cart: CartElement[] = [];
-  isError: boolean = false;
-  subs = new SubscriptionsContainer;
 
   constructor(public shop: ShopService, public auth: AuthService, private route: ActivatedRoute, public user: UserService, private toastr: ToastrService, private router: Router) {
 
-    this.subs.add = route.params.subscribe(params => {
-      this.category = params['category'];
-      this.getProducts();
-    });
+    this.router.events.pipe(
+      tap((evt) => {
+        if (!(evt instanceof NavigationEnd)) {
+          return;
+        }
+        window.scrollTo(0, 0)
+      }),
+      take(1)
+    ).subscribe();
 
-    this.subs.add = this.router.events.subscribe((evt) => {
-      if (!(evt instanceof NavigationEnd)) {
-        return;
-      }
-      window.scrollTo(0, 0)
-    });
-
+    route.params.pipe(
+      tap((params) => {
+        this.category = params['category'];
+      }),
+      switchMap(() => {
+        return this.getProducts();
+      }),
+      take(1)
+    ).subscribe();
 
   }
 
   ngOnInit(): void {
-   
+
   }
 
 
-  getProducts = () => {
-    this.products$ = this.shop.getProductsOfCategory(this.category).pipe(
+  getProducts(): Observable<RootObject[]> {
+    return this.products$ = this.shop.getProductsOfCategory(this.category).pipe(
 
       catchError(err => {
         console.log(err);
@@ -79,7 +86,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy(): void {
-    this.subs.dispose();
+
   }
 
 }

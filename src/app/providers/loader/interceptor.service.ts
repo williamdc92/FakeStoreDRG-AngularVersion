@@ -16,12 +16,11 @@ export class InterceptorService implements HttpInterceptor {
   constructor(private spinner: SpinnerService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // this.spinner.startLoading();
+    this.spinner.startLoading();
     return next.handle(req).pipe(
-      //delay(1000),
       finalize(
         () => {
-          //this.spinner.finishLoading();
+          this.spinner.finishLoading();
         }
       ),
     );

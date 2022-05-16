@@ -3,6 +3,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/providers/auth.service';
 import { orders, UserService } from 'src/app/providers/user.service';
+import { catchError, switchMap, take, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-order-detail',
@@ -11,37 +13,42 @@ import { orders, UserService } from 'src/app/providers/user.service';
 })
 export class OrderDetailComponent implements OnInit, OnDestroy {
 
-  order: orders | undefined ;
   id:string = "";
   tot:number = 0;
-
-  subs = new SubscriptionsContainer;
+  order$ : Observable<orders> = new Observable;
 
   constructor( private route: ActivatedRoute, public user:UserService, public auth:AuthService) { 
-    this.subs.add = route.params.subscribe(params => {
-      this.id = params['id'];
-      this.getOrder();
-      
-    });
+    route.params.pipe(
+      tap((params) => {
+        this.id = params['id'];
+      }),
+      switchMap(() => {
+        return this.getOrder();
+      }),
+      take(1)
+    ).subscribe();
   }
   
 
+ 
+
+  getOrder() : Observable<orders> {
+    return this.order$ = this.user.getOrderById(this.auth.analyzeToken!.user_id,this.id).pipe(
+      catchError((err) => {
+        console.log(err);
+        return of();
+      })
+    )
+  }
+
+  
 
   ngOnInit(): void {
   }
 
 
-  getOrder = () => {
-    this.subs.add = this.user.getOrderById(this.auth.analyzeToken!.user_id,this.id).subscribe({
-      next: (order) => {
-        this.order= order;
-      },
-      error: (error) => {console.log(error);}
-    })
-  }
-
   ngOnDestroy(): void {
-      this.subs.dispose();
+
   }
 
 }

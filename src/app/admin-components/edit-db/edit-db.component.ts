@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RootObject, ShopService } from 'src/app/providers/shop.service';
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 import { ToastrService } from 'ngx-toastr';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, Observable, of, switchMap, take, tap } from 'rxjs';
 
 @Component({
   selector: 'app-edit-db',
@@ -11,9 +11,6 @@ import { catchError, Observable, of } from 'rxjs';
   styleUrls: ['./edit-db.component.css']
 })
 export class EditDbComponent implements OnInit, OnDestroy {
-
-  subs = new SubscriptionsContainer();
-
   AddForm: FormGroup;
   products: RootObject[] = [];
   products$:Observable<RootObject[]> = new Observable;
@@ -32,56 +29,59 @@ export class EditDbComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.getProducts();
+    this.getProducts().subscribe();
   }
 
-  getProducts = () => {
-    this.products$ = this.shop.getproducts().pipe(
+  getProducts() : Observable<RootObject[]> {
+    return this.products$ = this.shop.getproducts().pipe(
       catchError((err) => {
         console.log(err);
         return of ([]);
       }))
   }
 
+ 
   addProduct = () => {
-
-    this.subs.add = this.shop.addProduct(this.AddForm.value).subscribe({
-  next: () => {
-    this.toastr.success('Product added!', 'Success', {
-      positionClass:"toast-bottom-left"
-    });
-    this.shop.dbChange = true;
-    this.getProducts();
-    
-  },
-  error: () => {
-    this.toastr.error('Cannot add product!', 'Error', {
-      positionClass:"toast-bottom-left"
-    });
-  }
-})
+    this.shop.addProduct(this.AddForm.value).pipe(
+      tap ( () => {
+        this.toastr.success('Product added!', 'Success', {
+          positionClass:"toast-bottom-left"
+        });
+        this.shop.dbChange = true;
+      }),
+      catchError ( () => {
+        this.toastr.error('Cannot add product!', 'Error', {
+          positionClass:"toast-bottom-left"
+        });
+        return of ([]);
+      }),
+      switchMap(() => {
+        return this.getProducts();
+      }),
+      take(1)
+    ).subscribe();
   }
 
   removeProduct = (idp: string) => {
-
-    this.subs.add = this.shop.deleteProductById(idp).subscribe({
-      next: () => {
+    this.shop.deleteProductById(idp).pipe(
+      tap(() => {
         this.toastr.warning('Product removed successfully!', 'Success', {
-        positionClass:"toast-bottom-left"
-      });
-      this.shop.dbChange = true;
-      this.getProducts();},
-      error: () => {
+          positionClass:"toast-bottom-left"
+        });
+        this.shop.dbChange = true;
+      }),
+      catchError(() => {
         this.toastr.error('Cannot remove product, please try again later', 'Error', {
           positionClass:"toast-bottom-left"
         });
-      }
-    })
-
+        return of ([]);
+      }),
+      take(1)
+    ).subscribe();
   }
 
  ngOnDestroy(): void {
-     this.subs.dispose();
+
  }
 
 }

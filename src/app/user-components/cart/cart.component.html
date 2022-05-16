@@ -1,18 +1,12 @@
 <div class="container">
     <div class="product-card row main">
 
-
-        <ng-template #loading>
-            <div class="loading">
-                <mat-spinner></mat-spinner>
-            </div>
-        </ng-template>
         <ng-template #empty>
             <div class="loading">
                 <img class="cart-e-img" src="../../../assets/cartempty.png">
             </div>
         </ng-template>
-        <div *ngIf=" (cart$ | async) as cart; else loading" class="col-md-10">
+        <div *ngIf=" (cart$ | async) as cart" class="col-md-10">
             <div *ngFor="let product of cart">
                 
                 <single-cart-element 

@@ -11,7 +11,10 @@ import {
   catchError,
   finalize,
   Observable,
+  of,
   retry,
+  take,
+  tap,
   throwError
 } from 'rxjs';
 import {
@@ -56,7 +59,7 @@ export class InterceptorAuthService {
               'authorization': `${key}`
             }
           });
-          this.refreshToken(req); //genera nuovo refreshToken
+          this.refreshToken(); //genera nuovo refreshToken
         } else if (this.isExpired(this.rToken)) { //se anche il refreshToken è scaduto, slogga l'utente
           this.auth.toastr.warning('Section expired, please login again', 'Warning', {
             positionClass: "toast-bottom-left"
@@ -127,30 +130,28 @@ export class InterceptorAuthService {
   }
 
 
-  refreshToken = (req: HttpRequest < any > ) => {
+  refreshToken = () => {
     if (!this.isRefreshing) {
-
       this.isRefreshing = true;
-
-      this.subs.add = this.auth.refreshToken().subscribe({
-        next: (res) => {
-          const newRefreshToken = res.toString();
-          if (newRefreshToken) {
-            localStorage.setItem('refreshToken', newRefreshToken);
-            this.rToken = localStorage.getItem('refreshToken');
-            console.log("provided new refreshToken : " + newRefreshToken);
-            this.isRefreshing = false;
-          }
-        },
-        error: (err) => {
+      this.auth.refreshToken().pipe(
+        tap((res) => {
+        const newRefreshToken = res.toString();
+        if (newRefreshToken) {
+          localStorage.setItem('refreshToken', newRefreshToken);
+          this.rToken = localStorage.getItem('refreshToken');
+          console.log("provided new refreshToken : " + newRefreshToken);
+          this.isRefreshing = false;
+        }}),
+        catchError((err) => {
           console.log(err.message);
-        }
-
-      })
+          return of ([])
+        }),
+        take(1)
+      ).subscribe();
     }
   }
 
   ngOnDestroy() {
-    this.subs.dispose();
+
   }
 }
