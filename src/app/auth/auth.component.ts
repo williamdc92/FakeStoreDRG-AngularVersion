@@ -12,7 +12,7 @@ import { of } from 'rxjs';
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
-export class AuthComponent implements OnInit, OnDestroy {
+export class AuthComponent implements OnInit{
 
   signup: boolean = false;
   login: boolean = true;
@@ -134,8 +134,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
   };
 
-  ngOnDestroy(): void {
-  }
+
 
 
 
