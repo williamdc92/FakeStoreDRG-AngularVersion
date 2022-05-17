@@ -21,7 +21,10 @@ export class SingleProductComponent implements OnInit {
   }
 
   currentValutation = (valutation: Valutation[]) => {
-
+    if (valutation.length ==0) {
+      return
+    }
+    
     let sumValutation = valutation.map(valutation => valutation.star).reduce((sum, valutation) => (sum + valutation), 0) / valutation.length;
 
     sumValutation = Math.round(sumValutation);

@@ -11,11 +11,12 @@ import { catchError, finalize, map, switchMap, take, tap } from 'rxjs/operators'
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css']
 })
-export class CartComponent implements OnInit, OnDestroy {
+export class CartComponent implements OnInit {
 
 
   cart$: BehaviorSubject<CartElement[]> = new BehaviorSubject<CartElement[]>([]);
   total$: Observable<number> = new Observable;
+  request$: Observable<CartElement[] | orders> = new Observable;
 
   constructor(public user: UserService, public auth: AuthService, private toastr: ToastrService) { }
 
@@ -42,89 +43,40 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   increaseCart = (idp: string | null) => {
-    this.user.increaseInCart(this.auth.analyzeToken!.user_id, idp).pipe(
-      tap(() => {
-        this.toastr.success('Quantity increased successfully', 'Success', {
-          positionClass: "toast-bottom-left"
-        });
-      }),
-      catchError((err) => {
-        this.toastr.warning('Cannot increase quantity', 'Error', {
-          positionClass: "toast-bottom-left"
-        });
-        console.log(err);
-        return of([]);
-      }),
-      switchMap(() => {
-        return this.getCart();
-      }),
-      take(1)
-    ).subscribe();
+   this.sendRequest(this.user.increaseInCart(this.auth.analyzeToken!.user_id, idp)).subscribe();
   }
-
 
   decreaseCart = (idp: string | null) => {
-    this.user.decreaseInCart(this.auth.analyzeToken!.user_id, idp).pipe(
-      tap(() => {
-        this.toastr.success('Product removed successfully', 'Success', {
-          positionClass: "toast-bottom-left"
-        });
-      }),
-      catchError((err) => {
-        this.toastr.warning('Cannot remove product', 'Error', {
-          positionClass: "toast-bottom-left"
-        });
-        return of([])
-      }),
-      switchMap(() => {
-        return this.getCart();
-      }),
-      take(1)
-    ).subscribe();
+    this.sendRequest(this.user.decreaseInCart(this.auth.analyzeToken!.user_id, idp)).subscribe();
   }
 
-
   removeElement = (idp: string | null) => {
-    this.user.removeProductFromCart(this.auth.analyzeToken!.user_id, idp).pipe(
-      tap(() => {
-        this.toastr.success('Product removed successfully', 'Success', {
-          positionClass: "toast-bottom-left"
-        });
-      }),
-      catchError(() => {
-        this.toastr.warning('Cannot remove product', 'Error', {
-          positionClass: "toast-bottom-left"
-        });
-        return of([])
-      }),
-      switchMap(() => {
-        return this.getCart();
-      }),
-      take(1),
-    ).subscribe();
+    this.sendRequest(this.user.removeProductFromCart(this.auth.analyzeToken!.user_id, idp)).subscribe();
   }
 
   placeOrder = () => {
-    this.user.addOrder(this.auth.analyzeToken!.user_id, localStorage.getItem('token')).pipe(
+    this.sendRequest(this.user.addOrder(this.auth.analyzeToken!.user_id, localStorage.getItem('token'))).subscribe();
+  }
+
+  sendRequest (request$ : Observable<CartElement | orders>) : Observable<CartElement[] | orders> {
+    return request$.pipe(
       tap(() => {
-        this.toastr.success('Order sent successfully!', 'Success', {
+        this.toastr.success('Done', 'Success', {
           positionClass: "toast-bottom-left"
         });
       }),
       catchError(() => {
-        this.toastr.error('Cannot send order, please try again', 'Error', {
+        this.toastr.warning('Operation failed', 'Error', {
           positionClass: "toast-bottom-left"
         });
-        return of([]);
+        return of([])
       }),
       switchMap(() => {
         return this.getCart();
       }),
       take(1)
-    ).subscribe()
+    )
   }
 
-  ngOnDestroy(): void {
-  }
 
 }

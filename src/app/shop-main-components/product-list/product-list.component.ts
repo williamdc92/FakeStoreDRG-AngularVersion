@@ -20,6 +20,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
   @Input() result: RootObject[] | undefined
   subs = new SubscriptionsContainer;
   cart: CartElement[] = [];
+  request$: Observable<CartElement[]> = new Observable
+
 
 
   constructor(public shop: ShopService, public auth: AuthService, private router: Router, public user: UserService, private toastr: ToastrService) { }
@@ -47,47 +49,12 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   addInCart(idproduct: string): void {
-
-    this.user.addProductInCart(this.auth.analyzeToken!.user_id, idproduct, localStorage.getItem('token')).pipe(
-      tap(() => {
-        this.toastr.success('Product added in cart!', 'Success', {
-          positionClass: "toast-bottom-left"
-        });
-      }),
-      catchError((err) => {
-        this.toastr.warning('Cannot add product', 'Error', {
-          positionClass: "toast-bottom-left"
-        });
-        return of([]);
-      }),
-      switchMap(() => {
-        return this.getUserCart()
-      }),
-      take(1)
-    ).
-      subscribe();
+  this.sendRequest( this.user.addProductInCart(this.auth.analyzeToken!.user_id, idproduct, localStorage.getItem('token'))).subscribe();
   }
 
 
   removeElement = (idp: string | null) => {
-    this.user.removeProductFromCart((this.auth.analyzeToken!.user_id), idp).pipe(
-      tap(() => {
-        this.toastr.warning('Product removed successfully', 'Success', {
-          positionClass: "toast-bottom-left"
-        });
-      }
-      ),
-      catchError(() => {
-        this.toastr.warning('Cannot remove product', 'Error', {
-          positionClass: "toast-bottom-left"
-        });
-        return of([]);
-      }),
-      switchMap(() => {
-        return this.getUserCart();
-      }),
-      take(1),
-    ).subscribe();
+    this.sendRequest(this.user.removeProductFromCart((this.auth.analyzeToken!.user_id), idp)).subscribe();
   }
 
   isInCart = (idp: string) => {
@@ -100,8 +67,26 @@ export class ProductListComponent implements OnInit, OnDestroy {
     } else {
       return null;
     }
+  }
 
-
+  sendRequest (request$ : Observable<CartElement>) : Observable<CartElement[] | void> {
+    return request$.pipe(
+      tap(() => {
+        this.toastr.success('Done', 'Success', {
+          positionClass: "toast-bottom-left"
+        });
+      }),
+      catchError(() => {
+        this.toastr.warning('Operation failed', 'Error', {
+          positionClass: "toast-bottom-left"
+        });
+        return of([])
+      }),
+      switchMap(() => {
+        return this.getUserCart();
+      }),
+      take(1)
+    )
   }
 
 

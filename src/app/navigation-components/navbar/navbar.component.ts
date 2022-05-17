@@ -5,7 +5,7 @@ import { AuthService } from 'src/app/providers/auth.service';
 import { ShopService } from 'src/app/providers/shop.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router'
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 
 
 
@@ -16,9 +16,10 @@ import { Observable, of } from 'rxjs';
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   
-  producers: string[] = [];
   producers$ : Observable<string[]> = new Observable;
-  categories: string[] = [];
+  categories$ : Observable<string[]> = new Observable;
+ // producers : Subscription | undefined
+
 
 
 
@@ -27,47 +28,43 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     
-    this.getProducers();
-    this.getCategories();
+    this.producers$ = this.getProducers(); 
+    this.categories$ = this.getCategories();
+    //this.producers = this.getProducers().subscribe();
+
     
      
 
   }
 
- getProducers() {
+ getProducers() : Observable<string[]> {
    return this.shop.getproducts().pipe(
-  map(product => product.map(product => product.producer)),
-  tap((producer) => {
-    this.producers = [... new Set(producer)]
-  }),
+  map(product => product.map(product => product.producer).filter((item, pos, self) => { return self.indexOf(item) == pos; })),
   catchError((err) => {
     console.log(err)
     return of ([])
   }),
   take(1)
-  ).subscribe();
+  );
  }
 
 
- getCategories= () => {
-   this.shop.getproducts().pipe(
-     map(product => product.map(product => product.category)),
-     tap((category) => {
-       this.categories = [...new Set(category)];
-     }),
+ getCategories()  : Observable<string[]> {
+   return this.shop.getproducts().pipe(
+     map(product => product.map(product => product.category).filter((item, pos, self) => { return self.indexOf(item) == pos; })),
      catchError((err) => {
       console.log(err)
       return of ([])
     }),
     take(1)
-   ).subscribe();
+   );
  }
 
 
  refreshNavbar= () => {
    if (this.shop.dbChange==true) {
-    this.getProducers();
-    this.getCategories();
+    this.getProducers().subscribe();
+    this.getCategories().subscribe();
     this.shop.dbChange = false;
    }
  }

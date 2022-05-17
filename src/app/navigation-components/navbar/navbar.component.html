@@ -27,17 +27,21 @@
             <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               🔍 Producers
             </a>
+            <ng-container *ngIf="(producers$ | async) as producers">
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li *ngFor = "let producer of producers" ><a class="dropdown-item" [routerLink]="['products/producer/'+producer]" >{{producer | titlecase}}</a></li>
             </ul>
+          </ng-container>
           </li>
           <li (click)="refreshNavbar()" class="nav-item  dropdown">
             <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               🔍 Categories
             </a>
+            <ng-container *ngIf="(categories$ | async) as categories">
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li *ngFor = "let category of categories"><a class="dropdown-item" [routerLink]="['products/category/'+category]" >{{category | titlecase}}</a></li>
             </ul>
+          </ng-container>
           </li>
 
           <li *ngIf="!this.auth.isLogged" class="nav-item">

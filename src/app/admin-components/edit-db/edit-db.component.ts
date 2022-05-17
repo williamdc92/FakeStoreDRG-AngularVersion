@@ -10,10 +10,11 @@ import { catchError, Observable, of, switchMap, take, tap } from 'rxjs';
   templateUrl: './edit-db.component.html',
   styleUrls: ['./edit-db.component.css']
 })
-export class EditDbComponent implements OnInit, OnDestroy {
+export class EditDbComponent implements OnInit {
   AddForm: FormGroup;
   products: RootObject[] = [];
   products$:Observable<RootObject[]> = new Observable;
+  sendRequest$ : Observable<RootObject[]> = new Observable;
   isAdding: boolean = true;
   isRemoving: boolean = false;
 
@@ -29,28 +30,36 @@ export class EditDbComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.getProducts().subscribe();
+    this.products$ = this.getProducts();
   }
 
   getProducts() : Observable<RootObject[]> {
-    return this.products$ = this.shop.getproducts().pipe(
+    return this.shop.getproducts().pipe(
       catchError((err) => {
         console.log(err);
         return of ([]);
-      }))
+      }),
+      take(1)) //take1 necessario?
   }
 
- 
   addProduct = () => {
-    this.shop.addProduct(this.AddForm.value).pipe(
+    this.sendRequest(this.shop.addProduct(this.AddForm.value)).subscribe();
+   }
+ 
+   removeProduct = (idp: string) => {
+   this.sendRequest(this.shop.deleteProductById(idp)).subscribe();
+   }
+ 
+  sendRequest (request$ : Observable<RootObject>) : Observable<RootObject[]> {
+    return request$.pipe(
       tap ( () => {
-        this.toastr.success('Product added!', 'Success', {
+        this.toastr.success('Done', 'Success', {
           positionClass:"toast-bottom-left"
         });
         this.shop.dbChange = true;
       }),
       catchError ( () => {
-        this.toastr.error('Cannot add product!', 'Error', {
+        this.toastr.error('Operation failed...', 'Error', {
           positionClass:"toast-bottom-left"
         });
         return of ([]);
@@ -59,29 +68,10 @@ export class EditDbComponent implements OnInit, OnDestroy {
         return this.getProducts();
       }),
       take(1)
-    ).subscribe();
+    )
   }
 
-  removeProduct = (idp: string) => {
-    this.shop.deleteProductById(idp).pipe(
-      tap(() => {
-        this.toastr.warning('Product removed successfully!', 'Success', {
-          positionClass:"toast-bottom-left"
-        });
-        this.shop.dbChange = true;
-      }),
-      catchError(() => {
-        this.toastr.error('Cannot remove product, please try again later', 'Error', {
-          positionClass:"toast-bottom-left"
-        });
-        return of ([]);
-      }),
-      take(1)
-    ).subscribe();
-  }
 
- ngOnDestroy(): void {
 
- }
 
 }
