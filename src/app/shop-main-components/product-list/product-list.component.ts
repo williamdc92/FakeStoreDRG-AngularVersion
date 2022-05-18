@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 import { CartElement, UserService } from 'src/app/providers/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { SubscriptionsContainer } from 'src/app/subscription-container';
-import { catchError, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { catchError, switchMap, take, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'product-list',
@@ -49,12 +49,12 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   addInCart(idproduct: string): void {
-  this.sendRequest( this.user.addProductInCart(this.auth.analyzeToken!.user_id, idproduct, localStorage.getItem('token'))).subscribe();
+  this.sendRequest( this.user.addProductInCart(this.auth.analyzeToken!.user_id, idproduct, localStorage.getItem('token')),"Product Added!","Can't add product...").subscribe();
   }
 
 
   removeElement = (idp: string | null) => {
-    this.sendRequest(this.user.removeProductFromCart((this.auth.analyzeToken!.user_id), idp)).subscribe();
+    this.sendRequest(this.user.removeProductFromCart((this.auth.analyzeToken!.user_id), idp), "Product Removed!","Can't remove product from cart...").subscribe();
   }
 
   isInCart = (idp: string) => {
@@ -69,15 +69,15 @@ export class ProductListComponent implements OnInit, OnDestroy {
     }
   }
 
-  sendRequest (request$ : Observable<CartElement>) : Observable<CartElement[] | void> {
+  sendRequest (request$ : Observable<CartElement>, successMsg : string, errorMsg : string) : Observable<CartElement[] | void> {
     return request$.pipe(
       tap(() => {
-        this.toastr.success('Done', 'Success', {
+        this.toastr.success(`${successMsg}`, 'Success', {
           positionClass: "toast-bottom-left"
         });
       }),
       catchError(() => {
-        this.toastr.warning('Operation failed', 'Error', {
+        this.toastr.warning(`${errorMsg}`, 'Error', {
           positionClass: "toast-bottom-left"
         });
         return of([])

@@ -14,7 +14,7 @@ import { Observable, of, Subscription } from 'rxjs';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent implements OnInit, OnDestroy {
+export class NavbarComponent implements OnInit {
   
   producers$ : Observable<string[]> = new Observable;
   categories$ : Observable<string[]> = new Observable;
@@ -30,7 +30,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     
     this.producers$ = this.getProducers(); 
     this.categories$ = this.getCategories();
-    //this.producers = this.getProducers().subscribe();
+    //this.producers = this.getProducers().subscribe(); alternative
 
     
      
@@ -85,9 +85,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   
 
-  ngOnDestroy(): void {
-  
-  }
 
 
 

@@ -16,9 +16,6 @@ import { AuthguardService } from './providers/guards/authguard.service';
 import {IsAdminGuardService} from './providers/guards/is-admin-guard.service';
 import { InterceptorService } from './providers/loader/interceptor.service';
 
-import { GrantPComponent } from './admin-components/grant-p/grant-p.component';
-import { EditDbComponent } from './admin-components/edit-db/edit-db.component';
-
 import { FooterComponent } from './navigation-components/footer/footer.component';
 import { NavbarComponent } from './navigation-components/navbar/navbar.component';
 
@@ -61,8 +58,6 @@ import { SpinnerComponent } from './spinner/spinner.component';
     ForbiddenComponent,
     CartComponent,
     OrderHistoryComponent,
-    GrantPComponent,
-    EditDbComponent,
     NavbarComponent,
     ProductDetailComponent,
     OrderDetailComponent,

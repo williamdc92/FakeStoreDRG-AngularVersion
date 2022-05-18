@@ -10,37 +10,40 @@ import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
 import { CartComponent } from './user-components/cart/cart.component';
 import { OrderHistoryComponent } from './user-components/order-history/order-history.component';
 import { AuthguardService } from './providers/guards/authguard.service';
-import {IsAdminGuardService} from './providers/guards/is-admin-guard.service';
-import { GrantPComponent } from './admin-components/grant-p/grant-p.component';
-import { EditDbComponent } from './admin-components/edit-db/edit-db.component';
 import { OrderDetailComponent } from './user-components/order-history/order-detail/order-detail.component';
 
 
 
 const routes: Routes = [
+
+  { path: 'admins', loadChildren: () => import('./admins/admins.module').then(m => m.AdminsModule) },
+
   {
   path:'',
   redirectTo: 'products',
   pathMatch: 'full'
-
   },
 
   {
     path:'products',
     component: HomeComponent
   },
+
   {
     path:'products/producer/:producer',
     component: ProducerComponent
   },
+
   {
     path: 'products/category/:category',
     component: CategoryComponent
   },
+
   {
     path:'products/product/:id',
     component :ProductDetailComponent
   },
+
   {
     path:'auth',
     component: AuthComponent
@@ -65,18 +68,6 @@ const routes: Routes = [
   },
 
   {
-    path:'grant_permissions',
-    component:GrantPComponent,
-    canActivate : [AuthguardService,IsAdminGuardService]
-  },
-
-  {
-    path: 'edit_db',
-    component:EditDbComponent,
-    canActivate : [AuthguardService,IsAdminGuardService]
-  },
-
-  {
     path:'forbidden',
     component: ForbiddenComponent
   },
@@ -85,6 +76,7 @@ const routes: Routes = [
     path:'**',
     component: PagenotfoundComponent
   }
+  
 ];
 
 @NgModule({

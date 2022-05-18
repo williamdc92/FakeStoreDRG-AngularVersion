@@ -1,6 +1,12 @@
+<div #main style="background-color:rgba(255, 255, 255, 0.781);">
+
 <app-spinner></app-spinner>
-<app-navbar></app-navbar>
+<app-navbar #navbar></app-navbar>
+<button #changecolor (click)="onChangeColor()">DarkMode</button>
+<button #setstate (click)="changeState()">Logout</button>
 
 <router-outlet></router-outlet>
 
 <app-footer></app-footer>
+
+</div>

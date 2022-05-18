@@ -54,8 +54,8 @@
               ♔ ADMIN: {{auth.analyzeToken?.email}}
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a style="color:red;" class="dropdown-item" [routerLink]="['grant_permissions']" >🔝Grant permissions to user</a></li>
-              <li><a style="color:red;" class="dropdown-item" [routerLink]="['edit_db']" >✏ Edit database</a></li>
+              <li><a style="color:red;" class="dropdown-item" [routerLink]="['admins/grant_permissions']" >🔝Grant permissions to user</a></li>
+              <li><a style="color:red;" class="dropdown-item" [routerLink]="['admins/edit_db']" >✏ Edit database</a></li>
               <li><a class="dropdown-item" [routerLink]="['orders']" >🕚Order History</a></li>
               <li><a (click)="logOut()" class="dropdown-item" [routerLink]="['']" >⬅ Logout</a></li>
             </ul>

@@ -24,7 +24,8 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   cart: CartElement[] = [];
 
   product: RootObject | undefined;
-  
+  request$: Observable<CartElement[]> = new Observable
+
   currentValutation: Valutation = {
     nickname: this.auth.analyzeToken?.email,
     star: 0,
@@ -106,45 +107,33 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   }
 
   addInCart(idproduct: string): void {
-    this.user.addProductInCart(this.auth.analyzeToken!.user_id, idproduct, localStorage.getItem('token')).pipe(
-      tap(() => {
-        this.toastr.success('Product added in cart!', 'Success', {
-          positionClass: "toast-bottom-left"
-        });
-      }),
-      catchError((err) => {
-        this.toastr.warning('Cannot add product', 'Error', {
-          positionClass: "toast-bottom-left"
-        });
-        return of([]);
-      }),
-      switchMap(() => {
-        return this.getUserCart()
-      }),
-      take(1)
-    ).subscribe();
+   this.sendRequest(this.user.addProductInCart(this.auth.analyzeToken!.user_id, idproduct, localStorage.getItem('token')),"Product Added!","Can't add product...").subscribe();
   }
 
 
   removeElement = (idp: string | null) => {
-    this.user.removeProductFromCart((this.auth.analyzeToken!.user_id), idp).pipe(
+  this.sendRequest( this.user.removeProductFromCart((this.auth.analyzeToken!.user_id), idp),"Product Removed!","Can't remove product from cart...").subscribe();
+  }
+
+  
+  sendRequest (request$ : Observable<CartElement>, successMsg:string, errorMsg:string) : Observable<CartElement[] | void> {
+    return request$.pipe(
       tap(() => {
-        this.toastr.warning('Product removed successfully', 'Success', {
+        this.toastr.success(`${successMsg}`, 'Success', {
           positionClass: "toast-bottom-left"
         });
-      }
-      ),
+      }),
       catchError(() => {
-        this.toastr.warning('Cannot remove product', 'Error', {
+        this.toastr.warning(`${errorMsg}`, 'Error', {
           positionClass: "toast-bottom-left"
         });
-        return of([]);
+        return of([])
       }),
       switchMap(() => {
         return this.getUserCart();
       }),
-      take(1),
-    ).subscribe();
+      take(1)
+    )
   }
 
   isInCart = (idp: string) => {
