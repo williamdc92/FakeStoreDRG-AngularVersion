@@ -40,11 +40,7 @@ export class NavbarComponent implements OnInit {
     
     this.producers$ = this.getProducers(); 
     this.categories$ = this.getCategories();
-    //this.producers = this.getProducers().subscribe(); alternative
-
     
-     
-
   }
 
  getProducers() : Observable<string[]> {

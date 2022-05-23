@@ -4,7 +4,7 @@ import {
   ShopService
 } from 'src/app/providers/shop.service';
 import {
-  Injectable
+  Injectable, OnDestroy
 } from '@angular/core';
 import {
   Actions,
@@ -25,14 +25,15 @@ import {
 } from './products.actions';
 
 import {
-  of} from 'rxjs';
+  of, Subject} from 'rxjs';
 import {
   switchMap,
   map,
   catchError,
   tap,
   take,
-  skipWhile} from 'rxjs/operators';
+  skipWhile,
+  takeUntil} from 'rxjs/operators';
 import {
   Store
 } from '@ngrx/store';
@@ -56,7 +57,7 @@ export interface Filters {
 }
 
 @Injectable()
-export class ProductsEffect {
+export class ProductsEffect implements OnDestroy {
 
   constructor(
     private actions$: Actions,
@@ -66,16 +67,9 @@ export class ProductsEffect {
     private filters: FiltersEffect
   ) {}
 
-
+  public ngDestroyed$ = new Subject();
 
   url: Params | undefined;
-
-
- 
-
-
-
-
 
   loadFilteredProducts$ = createEffect(() =>
     this.actions$.pipe(
@@ -91,10 +85,9 @@ export class ProductsEffect {
           } else {
             return failureLoadFilteredProducts()
           }
-        })
-
+        }), takeUntil(this.ngDestroyed$),
       ))
-    )
+    ) //chiusura?
   );
 
 
@@ -169,6 +162,10 @@ export class ProductsEffect {
       )
     )
   );
+
+  ngOnDestroy() {
+    this.ngDestroyed$.complete();
+    }
 
 
 }

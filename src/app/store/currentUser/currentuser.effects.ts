@@ -1,10 +1,10 @@
 import { UserService } from 'src/app/providers/user.service';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { failureLoginUser, loginUser, successLoginUser, logoutUser, clearUser, registerUser, failureRegisterUser, getUserCart, successGetUserCart, failureGetUserCart, getUserOrders, successGetUserOrders, failureGetUserOrders, manageUserCart, failureManageUserCart, addUserOrder, failureAddUserOrder, clearCart, addValutation, failureAddValutation, getOrderById, successGetOrderById, failureGetOrderById } from './currentuser.action';
 
-import { of } from 'rxjs';
-import { switchMap, map, catchError, tap, take, skipWhile } from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
+import { switchMap, map, catchError, tap, take, skipWhile, takeUntil } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { AppState } from '../app.state';
 import { ToastrService } from 'ngx-toastr';
@@ -17,7 +17,7 @@ import { FiltersEffect } from '../filters';
 
 @Injectable() 
 
-export class currentuserEffect {
+export class currentuserEffect implements OnDestroy {
     constructor(
       private actions$: Actions,
       private store: Store<AppState>,
@@ -28,8 +28,11 @@ export class currentuserEffect {
       private filters: FiltersEffect
     ) { }
 
-     successMessage = "";
-     errorMessage = "";
+    public ngDestroyed$ = new Subject();
+    successMessage = "";
+    errorMessage = "";
+
+
     loginUser$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loginUser),
@@ -149,9 +152,10 @@ getOrderById$ = createEffect(() =>
             return failureGetOrderById()
           }
         })
-
-      ))
-    )
+      )), 
+      takeUntil(this.ngDestroyed$)
+    ),
+     //chiusura?
   );
 
 
@@ -246,9 +250,12 @@ this.actions$.pipe(
         });
        return of(failureAddValutation({ err }));}),
       take(1)
-
     )
   )
 ))
+
+ngOnDestroy() {
+this.ngDestroyed$.complete();
+}
 
 }

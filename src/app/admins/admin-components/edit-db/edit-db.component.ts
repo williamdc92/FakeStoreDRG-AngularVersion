@@ -1,6 +1,5 @@
 import {
   Component,
-  OnDestroy,
   OnInit
 } from '@angular/core';
 
@@ -14,16 +13,7 @@ import {
   Store
 } from '@ngrx/store';
 import {
-  ToastrService
-} from 'ngx-toastr';
-import {
-  catchError,
-  Observable,
-  of ,
-  switchMap,
-  take,
-  tap
-} from 'rxjs';
+  Observable} from 'rxjs';
 import {
   RootObject,
   ShopService

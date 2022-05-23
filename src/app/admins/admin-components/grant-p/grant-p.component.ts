@@ -16,8 +16,7 @@ import { getUsers, getUsersState } from 'src/app/store/users/users.selector';
   styleUrls: ['./grant-p.component.css']
 })
 export class GrantPComponent implements OnInit, OnDestroy {
-
-  users : User[] = [];
+  
   users$ : Observable<User[] | undefined> = new Observable;
   currentId = this.auth.analyzeToken?.user_id;
 

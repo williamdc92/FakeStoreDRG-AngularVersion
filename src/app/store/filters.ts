@@ -1,3 +1,4 @@
+import { SubscriptionsContainer } from 'src/app/subscription-container';
 import {
     selectAllProducts,
     selectProductsFiltered
@@ -6,7 +7,7 @@ import {
     ShopService
   } from 'src/app/providers/shop.service';
   import {
-    Injectable
+    Injectable, OnDestroy
   } from '@angular/core';
   import {
     Actions,
@@ -19,7 +20,8 @@ import {
     from,
     iif,
     of ,
-    pipe
+    pipe,
+    Subject
   } from 'rxjs';
   import {
     switchMap,
@@ -33,7 +35,8 @@ import {
     retry,
     takeWhile,
     auditTime,
-    mergeMap
+    mergeMap,
+    takeUntil
   } from 'rxjs/operators';
   import {
     Store
@@ -68,14 +71,13 @@ import { loadFilteredProducts, loadProductById } from './products/products.actio
   
   
 @Injectable()
-export class FiltersEffect {
+export class FiltersEffect implements OnDestroy {
 
 constructor(
 private actions$: Actions,
-private store: Store < AppState > ,
-private shop: ShopService,
-private toastr: ToastrService,
 ) {}
+
+public ngDestroyed$ = new Subject();
 
 allFilters: Filters = {
     lastProductId: undefined,
@@ -124,10 +126,15 @@ allFilters: Filters = {
         return loadFilteredProducts()
       }
     }),
+   
     tap(() => {
       console.log(this.allFilters)
-    })
+    }), takeUntil(this.ngDestroyed$),
   )
 );
+
+ngOnDestroy () {
+  this.ngDestroyed$.complete();
+}
 
 }
