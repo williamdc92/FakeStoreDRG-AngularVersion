@@ -4,13 +4,16 @@ import { Observable } from 'rxjs';
 
 export const loadProducts =  createAction('[Product Component] Load Products');
 
-export const loadFilteredProducts = createAction('[Product Component] Load Products by producers', props<{key: string,filter: string, products?:RootObject[]}>());
-export const loadProductsByCategory = createAction('[Product Component] Load Products by category', props<{category: string}>());
+export const loadFilteredProducts = createAction('[Product Component] Load filtered');
+
 export const cleanFilteredProducts = createAction('[Product Component] Clean filtered Products');
 
 export const successLoadProduct = createAction('[Product Component] Products Loaded', props<{ products: RootObject[] }>());
-
 export const failureLoadProducts = createAction('[Product Component] Products non Loaded', props<{err:string}>());
+
+export const refillLoadFilteredProduct = createAction('[Product Component] Filtered products refilled', props<{key: string,filter: string, products?:RootObject[]}>());
+export const failureLoadFilteredProducts = createAction('[Product Component] Products non Loaded');
+
 
 export const loadProductById = createAction('[Product Component] Load Single Product by id', props<{id: string | null | undefined}>());
 export const clearProduct = createAction('[Product Component] Clear Single Product section');

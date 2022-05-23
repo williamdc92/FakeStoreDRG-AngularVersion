@@ -51,8 +51,6 @@ export class UsersEffect {
   loadUsers$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loadUsers),
-      tap((action) =>
-        console.log("action richiamata: " + action.type)),
       switchMap(() =>
         (this.users.getUsers()).pipe(
           map((users) =>

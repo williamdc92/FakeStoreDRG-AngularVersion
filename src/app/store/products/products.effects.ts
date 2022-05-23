@@ -1,4 +1,5 @@
 import {
+  selectAllProducts,
   selectProductsFiltered
 } from 'src/app/store/products/products.selector';
 import {
@@ -21,12 +22,15 @@ import {
   successLoadSingleProduct,
   loadFilteredProducts,
   manageDb,
+  refillLoadFilteredProduct,
+  failureLoadFilteredProducts,
 } from './products.actions';
 
 import {
   from,
   iif,
-  of
+  of ,
+  pipe
 } from 'rxjs';
 import {
   switchMap,
@@ -82,16 +86,23 @@ export class ProductsEffect {
     private toastr: ToastrService,
   ) {
 
-    this.store.select(hasLoaded).pipe(
-      tap((status) => {
-        this.status = status;
-        console.log(status);
-      })
-    ).subscribe();
+    this.store.select(hasLoaded).pipe(tap((value) => {
+      if (value == "success") {
+        console.log("loaded!")
+        this.hasLoaded = true;
+      }
+
+    })).subscribe();
+
+
 
   }
-  status: string = "";
+
+
+
   url: Params | undefined;
+
+  hasLoaded: boolean = false;
 
   allFilters: Filters = {
     lastProductId: undefined,
@@ -102,14 +113,12 @@ export class ProductsEffect {
 
 
 
+
   filters$ = createEffect(() =>
     this.actions$.pipe(
       ofType(routerNavigatedAction),
       filter((action) => Object.keys(action.payload.routerState.root.children[0].params).length != 0),
-      auditTime(100), //???
       map((action) => {
-
-
 
         const currentFilters: Filters = {
           lastProductId: undefined,
@@ -138,18 +147,12 @@ export class ProductsEffect {
           currentFilters.lastLoadFilterProducts_key = "producer"
           currentFilters.lastLoadFilterProducts_filter = url['producer'];
           this.allFilters = currentFilters
-          return loadFilteredProducts({
-            key: "producer",
-            filter: url['producer']
-          })
+          return loadFilteredProducts()
         } else {
           currentFilters.lastLoadFilterProducts_key = "category"
           currentFilters.lastLoadFilterProducts_filter = url['category'];
           this.allFilters = currentFilters
-          return loadFilteredProducts({
-            key: "category",
-            filter: url['category']
-          })
+          return loadFilteredProducts()
         }
       }),
       tap(() => {
@@ -158,11 +161,32 @@ export class ProductsEffect {
     )
   );
 
+
+
+  loadFilteredProducts$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(loadFilteredProducts),
+      switchMap(() => this.store.select(selectAllProducts).pipe(
+        skipWhile(data => data.length == 0),
+        map(() => {
+          if (this.allFilters.lastLoadFilterProducts_key == "producer" || this.allFilters.lastLoadFilterProducts_key == "category") {
+            return refillLoadFilteredProduct({
+              key: this.allFilters.lastLoadFilterProducts_key,
+              filter: this.allFilters.lastLoadFilterProducts_filter!
+            })
+          } else {
+            return failureLoadFilteredProducts()
+          }
+        })
+
+      ))
+    )
+  );
+
+
   loadProducts$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loadProducts),
-      tap((action) =>
-        console.log("action richiamata: " + action.type)),
       switchMap(() =>
         (this.shop.getproducts()).pipe(
           map((products) =>
@@ -178,6 +202,7 @@ export class ProductsEffect {
       )
     )
   );
+
 
 
 
@@ -215,8 +240,6 @@ export class ProductsEffect {
   loadProductById$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loadProductById),
-      tap((action) =>
-        console.log("action richiamata: " + action.type)),
       switchMap((action) =>
         (this.shop.getProductById(action.id!)).pipe(
           map((product_detail) =>

@@ -2,7 +2,7 @@
 
 import { createReducer, on } from '@ngrx/store';
 import { RootObject } from 'src/app/providers/shop.service';
-import { loadProducts, loadProductById, successLoadProduct, successLoadSingleProduct, failureLoadProducts, failureLoadSingleProduct, clearProduct, loadProductsByCategory, cleanFilteredProducts, loadFilteredProducts } from './products.actions';
+import { loadProducts, loadProductById, successLoadProduct, successLoadSingleProduct, failureLoadProducts, failureLoadSingleProduct, clearProduct, cleanFilteredProducts, loadFilteredProducts, refillLoadFilteredProduct, failureLoadFilteredProducts } from './products.actions';
 
 export interface ProductState {
     products : RootObject[];
@@ -43,7 +43,7 @@ initialState,
 on(loadProducts, (state) => ({ ...state, status: 'loading' })),
 
 
-on(loadFilteredProducts, (state, {key,filter, products}) => ({
+on(refillLoadFilteredProduct, (state, {key,filter, products}) => ({
     ...state, 
     
     filteredProducts: state.products.filter(item => {
@@ -51,11 +51,6 @@ on(loadFilteredProducts, (state, {key,filter, products}) => ({
       if (key == "category") return item.category == filter
       return
     }),
-  })),
-
-on(loadProductsByCategory, (state, {category}) => ({ 
-  ...state, 
-  filteredProducts: state.products.filter(item => item.category==category)
   })),
 
 on(cleanFilteredProducts, (state) => ({
@@ -82,7 +77,7 @@ on(successLoadProduct, (state, { products }) => ({
 
 //Failure
 
-on(failureLoadProducts, (state, {err}) => ({
+on(failureLoadProducts || failureLoadFilteredProducts, (state, {err}) => ({
     ...state,
     error: err,
     status: 'error',

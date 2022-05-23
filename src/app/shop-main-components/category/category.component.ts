@@ -30,10 +30,13 @@ import {
   take,
   tap
 } from 'rxjs/operators';
-import { cleanFilteredProducts, loadProducts, loadProductsByCategory } from 'src/app/store/products/products.actions';
+
 import { Store } from '@ngrx/store';
-import { hasLoaded, selectAllProducts, selectProductsFiltered} from 'src/app/store/products/products.selector';
 import { AppState } from 'src/app/store/app.state';
+import { selectProductsFiltered } from 'src/app/store/products/products.selector';
+import { cleanFilteredProducts } from 'src/app/store/products/products.actions';
+
+
 
 @Component({
   selector: 'app-category',

@@ -32,9 +32,6 @@ export class currentuserEffect {
     loginUser$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loginUser),
-      tap((action) => {
-      console.log("action richiamata: " + action.type)
-    }),
       switchMap((auth) =>
         (this.auth.logIn(auth.validationForm)).pipe(
           tap((res) => {

@@ -37,9 +37,9 @@ import {
   tap
 } from 'rxjs';
 import { State, Store } from '@ngrx/store';
+import { selectProductsFiltered } from 'src/app/store/products/products.selector';
+import { cleanFilteredProducts } from 'src/app/store/products/products.actions';
 import { AppState } from 'src/app/store/app.state';
-import { hasLoaded, selectAllProducts, selectProductsFiltered } from 'src/app/store/products/products.selector';
-import { cleanFilteredProducts, loadProducts } from 'src/app/store/products/products.actions';
 
 
 @Component({

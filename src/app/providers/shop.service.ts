@@ -1,4 +1,4 @@
-import { loadProductById, loadProductsByCategory } from 'src/app/store/products/products.actions';
+import { loadProductById } from 'src/app/store/products/products.actions';
 import {
   Injectable
 } from '@angular/core';
