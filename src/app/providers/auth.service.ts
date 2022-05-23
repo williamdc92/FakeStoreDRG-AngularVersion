@@ -1,3 +1,4 @@
+import { clearUser, successLoginUser } from '../store/currentUser/currentuser.action';
 import {
   Injectable
 } from '@angular/core';
@@ -16,6 +17,8 @@ import {
 import {
   ToastrService
 } from 'ngx-toastr';
+import { Store } from '@ngrx/store';
+import { AppState } from '../store/app.state';
 
 
 export interface SignUpFormInterface {
@@ -34,12 +37,12 @@ export interface LoginFormInterface {
 }
 
 export interface SuccessfulLogin {
-  grantType: string,
+    grantType: string,
     token: string,
     refreshToken: string,
     email: string,
     id: string,
-    isAdmin: string;
+    isAdmin: boolean;
 }
 
 export interface RefreshToken {
@@ -76,6 +79,19 @@ export class AuthService {
   analyzeToken: checkToken | undefined;
   
 
+  constructor(
+    private http: HttpClient, 
+    private store: Store<AppState>
+    ) {
+
+    if (localStorage.getItem('token')) {
+      this.checkTokensExpiration();
+
+    }
+
+  }
+
+
   parseJwt = (token: string | null) => {
     if (token) {
       try {
@@ -102,20 +118,31 @@ export class AuthService {
     return isExpiredToken;
   }
 
-
-  constructor(private http: HttpClient, public toastr: ToastrService) {
-    if (localStorage.getItem('token')) {
-    
-      this.checkTokensExpiration();
-    
-    //this.checkAuthToken(localStorage.getItem('token'));
+  checkTokensExpiration = () => {
+    const nToken = localStorage.getItem('token')
+    const rToken = localStorage.getItem('refreshToken');
+    if (nToken && rToken) {
+  
+    if (this.isExpired(nToken) && this.isExpired(rToken) ) {
+        this.store.dispatch(clearUser());
     }
+    else {
+       
+       this.analyzeToken = this.parseJwt(localStorage.getItem('token'));;
+       const user : SuccessfulLogin = {
+        grantType : "bearer",
+        token : localStorage.getItem('token')!,
+        refreshToken : localStorage.getItem('refreshToken')!,
+        email : this.analyzeToken?.email!,
+        id : this.analyzeToken?.user_id!,
+        isAdmin : this.analyzeToken?.isAdmin!
+       }
+       this.store.dispatch(successLoginUser({ currentuser: user }));
+       this.isLogged = true;
+    }
+  }}
 
-  }
 
-  ngOnDestroy() {
-
-  }
 
   signUp = (form: SignUpFormInterface): Observable < Response > => {
     return this.http.post < Response > (`${environment.host}/register`, form)
@@ -133,28 +160,6 @@ export class AuthService {
     return this.http.post <RefreshToken> (`${environment.host}/token`, {})
   }
 
-checkTokensExpiration = () => {
-  const nToken = localStorage.getItem('token')
-  const rToken = localStorage.getItem('refreshToken');
-  if (nToken && rToken) {
 
-  if (this.isExpired(nToken) && this.isExpired(rToken) ) {
-      this.toastr.warning('Section expired, please login again', 'Warning', {
-        positionClass: "toast-bottom-left"
-     });
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-     this.analyzeToken = undefined;
-     this.isLogged = false;
-     
-     
-  }
-  else {
-     this.analyzeToken = this.parseJwt(localStorage.getItem('token'));;
-     this.isLogged = true;
-  }
-}
- 
-}
 
 }

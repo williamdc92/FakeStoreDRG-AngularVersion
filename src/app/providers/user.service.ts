@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import { Valutation } from './shop.service';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
 export interface User {
   id: string;
@@ -11,6 +12,7 @@ export interface User {
   email: string;
   password: string;
   token: string;
+  refresh_token: string;
   address: string;
   isAdmin: boolean;
   orders: [];
@@ -54,9 +56,12 @@ export interface orders {
 })
 export class UserService {
 
-  constructor( private http: HttpClient) { }
+  constructor( 
+    private http: HttpClient,
+    private auth : AuthService
+    ) { }
 
-  addValutation = (id: string | null, obj: Valutation, token:string | null) : Observable<Valutation> => {
+  addValutation = (id: string | null | undefined, obj: Valutation, token:string | null) : Observable<Valutation> => {
     
   
     
@@ -72,27 +77,31 @@ export class UserService {
 
 
 
-  increaseInCart = (id: string | null, idp: string | null) : Observable<CartElement> => {
+  increaseInCart = (idp: string | null) : Observable<CartElement> => {
 
+  const id = this.auth.analyzeToken!.user_id;
   return this.http.put <CartElement>(`${environment.host}/users/${id}/cart/${idp}/increase`, {})
 
   }
 
-  decreaseInCart = (id: string | null, idp : string | null) => {
-
+  decreaseInCart = (idp : string | null) => {
+  const id = this.auth.analyzeToken!.user_id;
   return this.http.put <CartElement>(`${environment.host}/users/${id}/cart/${idp}/decrease`, {})
 
   }
 
-  removeProductFromCart = (id: string | null , idp: string | null) : Observable<CartElement> => {
+  removeProductFromCart = (idp: string | null) : Observable<CartElement> => {
+    const id = this.auth.analyzeToken!.user_id;
     return this.http.delete<CartElement>(`${environment.host}/users/${id}/cart/${idp}`, {})
   }
 
-  addProductInCart = (id: string | null , idproduct: string | null, token: string | null) : Observable<CartElement> => {
+  addProductInCart = (idproduct: string | null) : Observable<CartElement> => {
     
     const body = {
       "id": idproduct
     }
+
+    const id = this.auth.analyzeToken!.user_id;
     
     
 
@@ -106,9 +115,8 @@ export class UserService {
     return this.http.put<User>(`${environment.host}/users/${id}/isadmin`, {})
   }; 
 
-  addOrder = (id: string | null, token: string | null) : Observable <orders> => {
-    
-
+  addOrder = () : Observable <orders> => {
+    const id = this.auth.analyzeToken!.user_id;
     return this.http.post<orders>(`${environment.host}/users/${id}/orders`, {});
   } 
 

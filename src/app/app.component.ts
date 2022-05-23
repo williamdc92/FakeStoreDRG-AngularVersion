@@ -1,67 +1,28 @@
-import { NavbarComponent } from './navigation-components/navbar/navbar.component';
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnInit } from '@angular/core';
 import { AuthService } from './providers/auth.service';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { AppState } from './store/app.state';
+import { loadProducts } from './store/products/products.actions';
+import {loadUsers } from './store/users/users.actions';
+import { getUserCart } from './store/currentUser/currentuser.action';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-
-  @ViewChild('main')
-  main!:ElementRef;
-
-  @ViewChild('navbar')
-  navbar!: NavbarComponent;
-
-  @ViewChild('changecolor')
-  changecolor!: ElementRef;
-
-  @ViewChild('setstate')
-  setstate!: ElementRef;
+export class AppComponent implements OnInit{
 
 
-  constructor(private auth: AuthService, private router: Router) {}
-  
 
-  // ngAfterViewInit() {
-  //   if (this.auth.isLogged) {
-  //     this.setstate.nativeElement.textContent = "LogOut";
-  //   } 
-  //    else {
-  //      this.setstate.nativeElement.textContent = "LogIn";
-  //      }
-  // }
+  constructor(private auth: AuthService, private router: Router, private store : Store<AppState>) {}
 
-  // onChangeColor = () => {
-  //   const currentcolor = this.main!.nativeElement.style.backgroundColor;
-  //   let newcolor = "";
-  //   if (currentcolor == "rgba(255, 255, 255, 0.78)") {
-  //     this.changecolor.nativeElement.textContent = "WhiteMode";
-  //     newcolor = "rgb(0, 0, 0)";
-  //   } 
-  //   else {
-  //     this.changecolor.nativeElement.textContent = "DarkMode";
-  //     newcolor = "rgba(255, 255, 255, 0.78)"
-  //   } 
-  //   this.main.nativeElement.style.backgroundColor=newcolor;
-  // }
 
-  // changeState() {
-  //   if (this.auth.isLogged) {
-  //     this.setstate.nativeElement.textContent = "LogIn";
-  //     this.navbar?.logOut();
-  //   }
-  //   else {
-  //     this.setstate.nativeElement.textContent = "LogOut";
-  //     this.router.navigate(['/auth']);
-
-  //   }
+  ngOnInit() {
+    this.store.dispatch(loadProducts()); //da spostare dopo aver implementato correttamente lazy load
     
-  // }
-
+  }
 
   
 }

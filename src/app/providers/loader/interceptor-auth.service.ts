@@ -29,17 +29,23 @@ import {
 import {
   Router
 } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InterceptorAuthService {
-  constructor(public auth: AuthService, private router: Router) {}
+  constructor(
+    public auth: AuthService,
+     private router: Router,
+     public toastr: ToastrService,
+     ) {}
 
   subs = new SubscriptionsContainer();
   isRefreshing = false;
   token: string | null = null;
   rToken: string | null = null;
+  
 
   intercept(req: HttpRequest < any > , next: HttpHandler): Observable < HttpEvent < any >> {
 
@@ -61,7 +67,7 @@ export class InterceptorAuthService {
           });
           this.refreshToken(); //genera nuovo refreshToken
         } else if (this.isExpired(this.rToken)) { //se anche il refreshToken è scaduto, slogga l'utente
-          this.auth.toastr.warning('Section expired, please login again', 'Warning', {
+          this.toastr.warning('Section expired, please login again', 'Warning', {
             positionClass: "toast-bottom-left"
           });
           localStorage.removeItem('token');

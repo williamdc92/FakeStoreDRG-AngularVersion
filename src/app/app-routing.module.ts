@@ -62,7 +62,7 @@ const routes: Routes = [
   },
 
   {
-    path: 'orders/order/:id',
+    path: 'orders/order/:ido',
     component:OrderDetailComponent,
     canActivate : [AuthguardService]
   },

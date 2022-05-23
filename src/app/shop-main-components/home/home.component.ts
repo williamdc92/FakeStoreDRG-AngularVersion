@@ -1,3 +1,6 @@
+import { AppState } from './../../store/app.state';
+import { selectAllProducts } from './../../store/products/products.selector';
+import { loadProducts } from './../../store/products/products.actions';
 import { SpinnerService } from './../../spinner/spinner.service';
 import {
   SubscriptionsContainer
@@ -39,6 +42,12 @@ import {
   of
 } from 'rxjs';
 
+import { 
+  Store 
+} from '@ngrx/store';
+
+
+
 
 
 @Component({
@@ -46,39 +55,46 @@ import {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit {
 
-  products$: Observable<RootObject[]> = new Observable;
-  cart: CartElement[] = [];
-  constructor(public shop: ShopService, public auth: AuthService, private router: Router, public user: UserService, private toastr: ToastrService, private spinner: SpinnerService) {
+  public allProducts$:  Observable<RootObject[]> = new Observable;
+  
+  constructor(
+    public shop: ShopService,
+    public auth: AuthService, 
+    private router: Router,
+    public user: UserService, 
+    private toastr: ToastrService, 
+    private spinner: SpinnerService,
+    private store: Store<AppState>) {
 
     this.router.events.pipe(
       tap((evt) => {
         if (!(evt instanceof NavigationEnd)) {
           return;
         }
-        window.scrollTo(0, 0)
+        window.scrollTo(0, 0);
       }),
       take(1)
     ).subscribe();
   }
+  
 
-  ngOnInit(): void {
-    this.products$ = this.getProducts();
+  async ngOnInit() {
+    this.allProducts$ = this.getData();
+    
   }
 
 
-  getProducts() : Observable<RootObject[]> {
-    return this.shop.getproducts().pipe(
-      catchError(err => {
-        console.log(err);
-        return of([]);
-      }),
+  getData() : Observable<RootObject []> {
+    return this.store.select(selectAllProducts).pipe(
+      tap(result => {
+        if (result.length == 0) {
+          console.log("popolate store on 0 lenght")
+          this.store.dispatch(loadProducts());
+        }
+      })
     );
-  }
-
-
-  ngOnDestroy(): void {
   }
 
 

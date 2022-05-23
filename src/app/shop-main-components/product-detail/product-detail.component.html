@@ -1,19 +1,19 @@
 
-<div >
+<div *ngIf="(product$ | async) as product" >
 <div class="row main">
 
 
-    <div class="jumbo_left jumbotron col-sm-12 col-lg-6 col-xl-6 col-md-6">
-        <h1 class="prod_h1">{{product?.title}}</h1>
-        <p class="prod_dex">{{product?.description}}</p>
-        <p class="prod_btn"><button  *ngIf="!isInCart(id) && product" (click)="addInCart(product.id)" [disabled]="!this.auth.isLogged" class="btn btn-primary btn-lg" href="#" role="button">🛒 Add to cart <span *ngIf="!this.auth.isLogged"> disabled: Please Login</span></button></p>
-        <p class="prod_btn"><button  *ngIf="isInCart(id) && product" (click)="removeElement(id)" [disabled]="!this.auth.isLogged" class="btn btn-primary btn-lg" href="#" role="button">🛒 Remove from cart </button></p>
+    <div  class="jumbo_left jumbotron col-sm-12 col-lg-6 col-xl-6 col-md-6">
+        <h1 class="prod_h1">{{product.title}}</h1>
+        <p class="prod_dex">{{product.description}}</p>
+        <p class="prod_btn"><button  *ngIf="!isInCart(product.id) && product" (click)="addInCart(product.id)" [disabled]="!this.auth.isLogged" class="btn btn-primary btn-lg" href="#" role="button">🛒 Add to cart <span *ngIf="!this.auth.isLogged"> disabled: Please Login</span></button></p>
+        <p class="prod_btn"><button  *ngIf="isInCart(product.id) && product" (click)="removeElement(product.id)" [disabled]="!this.auth.isLogged" class="btn btn-primary btn-lg" href="#" role="button">🛒 Remove from cart </button></p>
          
       </div>
 
 
       <div class="jumbo_right jumbotron col-sm-12 col-lg-6 col-xl-6 col-md-6" >
-        <img class="prod_img" src="{{product?.image}}"/>
+        <img class="prod_img" [src]="product?.image"/>
     </div>
 
     </div>

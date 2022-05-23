@@ -12,7 +12,7 @@
 
   </ng-template>
 
-      <ng-container *ngIf="( products$ | async | filter : this.shop.searchTerm) as result">
+      <ng-container *ngIf="( f_products$ | async | filter : this.shop.searchTerm) as result">
           <div *ngIf="(result.length>0) else empty">
             <product-list [result]="result"></product-list>
           </div>

@@ -1,4 +1,18 @@
-import { NgModule } from '@angular/core';
+import { ProductsEffect } from './store/products/products.effects';
+import { StoreModule, MetaReducer } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { storeFreeze} from 'ngrx-store-freeze';
+
+import {
+  StoreRouterConnectingModule,
+  RouterStateSerializer
+} from '@ngrx/router-store';
+
+
+
+
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
@@ -40,6 +54,13 @@ import { SingleCartElementComponent } from './user-components/cart/single-cart-e
 import { SingleOrderComponent } from './user-components/order-history/single-order/single-order.component';
 import { ProductListComponent } from './shop-main-components/product-list/product-list.component';
 import { SpinnerComponent } from './spinner/spinner.component';
+import { environment } from 'src/environments/environment';
+import { productsReducer, singleProductReducer } from './store/products/products.reducer';
+import {usersReducer } from './store/users/users.reducer';
+import { UsersEffect } from './store/users/users.effects';
+import { currentuserReducer } from './store/currentUser/currentuser.reducer';
+import { currentuserEffect } from './store/currentUser/currentuser.effects';
+
 
 
 
@@ -79,7 +100,15 @@ import { SpinnerComponent } from './spinner/spinner.component';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     MatProgressSpinnerModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    StoreModule.forRoot({products : productsReducer, currentUser : currentuserReducer, product_detail : singleProductReducer, users : usersReducer, }),
+    EffectsModule.forRoot([ProductsEffect, UsersEffect, currentuserEffect]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+      logOnly: environment.production, // Restrict extension to log-only mode
+      autoPause: true, // Pauses recording actions and state changes when the extension window is not open
+    }),
+    StoreRouterConnectingModule.forRoot()
   ],
   providers: [AuthguardService,IsAdminGuardService, {provide: HTTP_INTERCEPTORS,useClass:InterceptorService, multi:true},{provide: HTTP_INTERCEPTORS,useClass:InterceptorAuthService, multi:true}, { provide: LocationStrategy, useClass: PathLocationStrategy }],
   bootstrap: [AppComponent]

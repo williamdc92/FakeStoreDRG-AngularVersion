@@ -7,6 +7,12 @@ import { ShopService, RootObject } from 'src/app/providers/shop.service';
 import { AuthService } from 'src/app/providers/auth.service';
 import { CartElement, Product, UserService } from 'src/app/providers/user.service';
 import { ToastrService } from 'ngx-toastr';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
+import { selectAllProducts, selectProductByID } from 'src/app/store/products/products.selector';
+import { clearProduct, loadProductById } from 'src/app/store/products/products.actions';
+import { UserCart, UserState } from 'src/app/store/currentUser/currentuser.selector';
+import { addValutation, clearCart, getUserCart, manageUserCart } from 'src/app/store/currentUser/currentuser.action';
 
 
 
@@ -21,9 +27,10 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   valutation: undefined | number;
   length: number = 0;
   isError: boolean = false;
-  cart: CartElement[] = [];
+  cart: CartElement[] | undefined = [];
 
-  product: RootObject | undefined;
+
+  product$: Observable<RootObject | undefined> = new Observable;
   request$: Observable<CartElement[]> = new Observable
 
   currentValutation: Valutation = {
@@ -32,11 +39,17 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     comment: "",
   };
 
+  constructor(
+    public user: UserService,
+    public shop: ShopService,
+    private route: ActivatedRoute,
+    private router: Router,
+    public auth: AuthService,
+    public toastr: ToastrService,
+    private store: Store<AppState>
+  ) {
 
-
-  constructor(public user: UserService, public shop: ShopService, private route: ActivatedRoute, private router: Router, public auth: AuthService, public toastr: ToastrService) {
-
-    this.router.events.pipe(
+    this.router.events.pipe( //si chiude con il take(1)
       tap((evt) => {
         if (!(evt instanceof NavigationEnd)) {
           return;
@@ -46,108 +59,67 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       take(1)
     ).subscribe();
 
-    route.params.pipe(
-      tap((params) => {
-        this.id = params['id'];
-      }),
-      switchMap(() => {
-        return this.getProductData();
-      }),
-      take(1)
-    ).subscribe();
 
   }
 
-  getProductData(): Observable<RootObject | void[]> {
-    return this.shop.getProductById(this.id).pipe(
-      tap((product) => {
-        this.product = product;
-        this.length = this.product.valutations.length;
-        this.valutation = product.valutations.map(valutation => valutation.star).reduce((sum, valutation) => sum + valutation, 0) / this.length;
-      }),
-      catchError((error: any) => {
-        console.log(error);
-        return of([]);
-      }),
-      take(1));
-  }
 
   ngOnInit(): void {
-    if (localStorage.getItem('isLogged') === 'true') { this.getUserCart().subscribe(); }
+
+
+    this.product$ = this.getProductData();
+
+    if (localStorage.getItem('token')) 
+    {
+      this.store.dispatch(getUserCart())
+      this.getUserCart().subscribe();
+    }
+
+  }
+
+
+  getProductData(): Observable<RootObject | undefined> { //si chiude con la pype
+    return this.store.select(selectProductByID).pipe(
+      tap((product) => {
+        if (product) {
+          const valutations = product.valutations;
+          this.length = valutations.length;
+          this.valutation = valutations.map(valutation => valutation.star).reduce((sum, valutation) => sum + valutation, 0) / this.length;
+        }
+      })
+    );
   }
 
   addReview = () => {
-    this.user.addValutation(this.id, this.currentValutation, (localStorage.getItem('token'))).pipe(
-      tap(() => {
-        this.toastr.success('Valutation added, thanks!', 'Success', {
-          positionClass: "toast-bottom-left"
-        });
-      }),
-      catchError((error) => {
-        this.toastr.error('cannot send valutation, please try again!', 'Error', {
-          positionClass: "toast-bottom-left"
-        });
-        return of([]);
-      }),
-      switchMap(() => {
-        return this.getProductData()
-      }),
-      take(1)
-    ).subscribe()
+    this.store.dispatch(addValutation({valutation : this.currentValutation}));
   }
 
-  getUserCart(): Observable<CartElement[] | void> {
-    return this.user.getCart(this.auth.analyzeToken!.user_id).pipe(
-      tap((cart) => this.cart = cart),
-      catchError((error) => {
-        console.log(error);
-        return of([]);
-      }),
-      take(1));
-  }
-
-  addInCart(idproduct: string): void {
-   this.sendRequest(this.user.addProductInCart(this.auth.analyzeToken!.user_id, idproduct, localStorage.getItem('token')),"Product Added!","Can't add product...").subscribe();
-  }
-
-
-  removeElement = (idp: string | null) => {
-  this.sendRequest( this.user.removeProductFromCart((this.auth.analyzeToken!.user_id), idp),"Product Removed!","Can't remove product from cart...").subscribe();
-  }
-
-  
-  sendRequest (request$ : Observable<CartElement>, successMsg:string, errorMsg:string) : Observable<CartElement[] | void> {
-    return request$.pipe(
-      tap(() => {
-        this.toastr.success(`${successMsg}`, 'Success', {
-          positionClass: "toast-bottom-left"
-        });
-      }),
-      catchError(() => {
-        this.toastr.warning(`${errorMsg}`, 'Error', {
-          positionClass: "toast-bottom-left"
-        });
-        return of([])
-      }),
-      switchMap(() => {
-        return this.getUserCart();
-      }),
+  getUserCart(): Observable<CartElement[] | void> { //si chiude con il take(1)
+    return this.store.select(UserCart).pipe(
       take(1)
     )
   }
 
+  addInCart(idproduct: string): void {
+    this.store.dispatch(manageUserCart({ request$: this.user.addProductInCart(idproduct), successMsg: "Product Added!", errorMsg: "Can't add product..." }));
+  }
+
+
+  removeElement = (idproduct: string | null) => {
+    this.store.dispatch(manageUserCart({ request$: this.user.removeProductFromCart(idproduct), successMsg: "Product Removed!", errorMsg: "Can't remove product..." }))
+  }
+
+
   isInCart = (idp: string) => {
-    if (localStorage.getItem('token')) {
-      if (this.cart.some(p => p.product.id === idp)) {
-        return true;
-      } else {
-        return false;
-      }
+    if (this.cart?.some(p => p.product.id === idp)) {
+      return true;
     } else {
-      return null;
+      return false;
     }
+
   }
 
   ngOnDestroy(): void {
+    this.store.dispatch(clearProduct());
+    this.store.dispatch(clearCart());
   }
 }

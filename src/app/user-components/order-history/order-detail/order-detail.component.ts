@@ -5,6 +5,9 @@ import { AuthService } from 'src/app/providers/auth.service';
 import { orders, UserService } from 'src/app/providers/user.service';
 import { catchError, switchMap, take, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
+import { AppState } from 'src/app/store/app.state';
+import { Store } from '@ngrx/store';
+import { OrderById } from 'src/app/store/currentUser/currentuser.selector';
 
 @Component({
   selector: 'app-order-detail',
@@ -15,35 +18,20 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
   id:string = "";
   tot:number = 0;
-  order$ : Observable<orders> = new Observable;
+  order$ : Observable<orders| undefined> = new Observable;
 
-  constructor( private route: ActivatedRoute, public user:UserService, public auth:AuthService) { 
-    route.params.pipe(
-      tap((params) => {
-        this.id = params['id'];
-      }),
-      switchMap(() => {
-        return this.getOrder();
-      }),
-      take(1)
-    ).subscribe();
+  constructor( 
+    private route: ActivatedRoute, 
+    public user:UserService, 
+    public auth:AuthService,
+    private store: Store < AppState > 
+    ) 
+    { 
   }
-  
-
- 
-
-  getOrder() : Observable<orders> {
-    return this.order$ = this.user.getOrderById(this.auth.analyzeToken!.user_id,this.id).pipe(
-      catchError((err) => {
-        console.log(err);
-        return of();
-      })
-    )
-  }
-
   
 
   ngOnInit(): void {
+    this.order$ = this.store.select(OrderById)
   }
 
 

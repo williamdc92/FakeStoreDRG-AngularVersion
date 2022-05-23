@@ -6,6 +6,10 @@ import { ShopService } from 'src/app/providers/shop.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router'
 import { Observable, of, Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
+import { logoutUser } from 'src/app/store/currentUser/currentuser.action';
+import { selectAllProducts } from 'src/app/store/products/products.selector';
 
 
 
@@ -18,12 +22,18 @@ export class NavbarComponent implements OnInit {
   
   producers$ : Observable<string[]> = new Observable;
   categories$ : Observable<string[]> = new Observable;
- // producers : Subscription | undefined
 
 
 
 
-  constructor(public shop: ShopService, public auth: AuthService, public toastr: ToastrService, public router: Router) { }
+
+  constructor(
+    public shop: ShopService, 
+    public auth: AuthService, 
+    public toastr: ToastrService, 
+    public router: Router,
+    private store: Store<AppState>,
+    ) { }
 
 
   ngOnInit(): void {
@@ -38,49 +48,21 @@ export class NavbarComponent implements OnInit {
   }
 
  getProducers() : Observable<string[]> {
-   return this.shop.getproducts().pipe(
-  map(product => product.map(product => product.producer).filter((item, pos, self) => { return self.indexOf(item) == pos; })),
-  catchError((err) => {
-    console.log(err)
-    return of ([])
-  }),
-  take(1)
-  );
+   return this.store.select(selectAllProducts).pipe(
+  map(product => product.map(product => product.producer).filter((item, pos, self) => { return self.indexOf(item) == pos; })));
  }
 
 
  getCategories()  : Observable<string[]> {
-   return this.shop.getproducts().pipe(
-     map(product => product.map(product => product.category).filter((item, pos, self) => { return self.indexOf(item) == pos; })),
-     catchError((err) => {
-      console.log(err)
-      return of ([])
-    }),
-    take(1)
+   return this.store.select(selectAllProducts).pipe(
+     map(product => product.map(product => product.category).filter((item, pos, self) => { return self.indexOf(item) == pos; }))
    );
  }
 
 
- refreshNavbar= () => {
-   if (this.shop.dbChange==true) {
-    this.getProducers().subscribe();
-    this.getCategories().subscribe();
-    this.shop.dbChange = false;
-   }
- }
-  
-
-
   logOut(): void {
     
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    this.auth.analyzeToken = undefined;
-    this.auth.isLogged = false;
-
-    this.toastr.success('Logout successful!', 'Success', {
-      positionClass:"toast-bottom-left"
-    });
+    this.store.dispatch(logoutUser());
   }
 
   

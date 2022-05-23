@@ -4,7 +4,7 @@ import {
   OnDestroy
 } from '@angular/core';
 import {
-  ActivatedRoute, NavigationEnd, Router
+  ActivatedRoute, NavigationEnd, Params, Router
 } from '@angular/router';
 import {
   AuthService
@@ -12,11 +12,9 @@ import {
 import {
   ShopService,
   RootObject,
-  Valutation
 } from 'src/app/providers/shop.service';
 import {
   CartElement,
-  Product,
   UserService
 } from 'src/app/providers/user.service';
 import {
@@ -24,14 +22,18 @@ import {
 } from 'ngx-toastr';
 import {
   Observable,
-  of
+  Subscription
 } from 'rxjs'
 import {
-  catchError,
+  map,
   switchMap,
   take,
   tap
 } from 'rxjs/operators';
+import { cleanFilteredProducts, loadProducts, loadProductsByCategory } from 'src/app/store/products/products.actions';
+import { Store } from '@ngrx/store';
+import { hasLoaded, selectAllProducts, selectProductsFiltered} from 'src/app/store/products/products.selector';
+import { AppState } from 'src/app/store/app.state';
 
 @Component({
   selector: 'app-category',
@@ -41,12 +43,17 @@ import {
 export class CategoryComponent implements OnInit, OnDestroy {
 
   category: string = "";
-  products: RootObject[] = [];
-  products$: Observable<RootObject[]> = new Observable
-  cart: CartElement[] = [];
+  public f_products$ : Observable<RootObject[] | void> = new Observable;
 
-  constructor(public shop: ShopService, public auth: AuthService, private route: ActivatedRoute, public user: UserService, private toastr: ToastrService, private router: Router) {
-
+  constructor(
+    public shop: ShopService, 
+    public auth: AuthService, 
+    private route: ActivatedRoute, 
+    public user: UserService, 
+    private toastr: ToastrService, 
+    private router: Router, 
+    private store: Store<AppState>
+    ){
     this.router.events.pipe(
       tap((evt) => {
         if (!(evt instanceof NavigationEnd)) {
@@ -56,37 +63,18 @@ export class CategoryComponent implements OnInit, OnDestroy {
       }),
       take(1)
     ).subscribe();
-
-    route.params.pipe(
-      tap((params) => {
-        this.category = params['category'];
-      }),
-      switchMap(() => {
-        return this.getProducts();
-      }),
-      take(1)
-    ).subscribe();
-
   }
 
   ngOnInit(): void {
-
+  this.f_products$ = this.getData();    
   }
 
-
-  getProducts(): Observable<RootObject[]> {
-    return this.products$ = this.shop.getProductsOfCategory(this.category).pipe(
-
-      catchError(err => {
-        console.log(err);
-        return of([]);
-      })
-    )
+  getData() : Observable<RootObject [] | undefined>{
+    return this.store.select(selectProductsFiltered)
   }
-
 
   ngOnDestroy(): void {
-
+    this.store.dispatch(cleanFilteredProducts());
   }
 
 }

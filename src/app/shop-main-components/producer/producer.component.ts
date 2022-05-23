@@ -28,12 +28,18 @@ import {
 } from 'ngx-toastr';
 import {
   catchError,
+  map,
   Observable,
   of,
+  Subscription,
   switchMap,
   take,
   tap
 } from 'rxjs';
+import { State, Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
+import { hasLoaded, selectAllProducts, selectProductsFiltered } from 'src/app/store/products/products.selector';
+import { cleanFilteredProducts, loadProducts } from 'src/app/store/products/products.actions';
 
 
 @Component({
@@ -44,12 +50,17 @@ import {
 export class ProducerComponent implements OnInit, OnDestroy {
 
   producer: string = "";
-  products: RootObject[] = [];
-  products$: Observable<RootObject[]> = new Observable;
   cart: CartElement[] = [];
+  public f_products$ : Observable<RootObject[] | undefined> = new Observable;
 
-
-  constructor(public shop: ShopService, public auth: AuthService, private route: ActivatedRoute, public user: UserService, private toastr: ToastrService, private router: Router) {
+  constructor(
+    public shop: ShopService, 
+    public auth: AuthService, 
+    private route: ActivatedRoute, 
+    public user: UserService, 
+    private router: Router,
+    private store: Store<AppState>,
+    ){
 
     this.router.events.pipe(
       tap((evt) => {
@@ -60,36 +71,18 @@ export class ProducerComponent implements OnInit, OnDestroy {
       }),
       take(1)
     ).subscribe();
-
-    route.params.pipe(
-      tap((params) => {
-        this.producer = params['producer'];
-      }),
-      switchMap(() => {
-        return this.getProducts();
-      }),
-      take(1)
-    ).subscribe();
   }
-
-
 
   ngOnInit(): void {
+    this.f_products$ = this.getData();
   }
 
-  getProducts() : Observable<RootObject[]> {
-   return this.products$ = this.shop.getProductsOfProducer(this.producer).pipe(
-      catchError(err => {
-        console.log(err);
-        return of([]);
-      })
-    )
+  getData() : Observable<RootObject [] | undefined> {
+    return this.store.select(selectProductsFiltered);
   }
 
   ngOnDestroy(): void {
- 
+    this.store.dispatch(cleanFilteredProducts());
   }
-
-
 
 }
