@@ -1,7 +1,5 @@
 import {
-  selectAllProducts,
-  selectProductsFiltered
-} from 'src/app/store/products/products.selector';
+  selectAllProducts} from 'src/app/store/products/products.selector';
 import {
   ShopService
 } from 'src/app/providers/shop.service';
@@ -27,25 +25,14 @@ import {
 } from './products.actions';
 
 import {
-  from,
-  iif,
-  of ,
-  pipe
-} from 'rxjs';
+  of} from 'rxjs';
 import {
   switchMap,
   map,
   catchError,
   tap,
   take,
-  withLatestFrom,
-  filter,
-  skipWhile,
-  retry,
-  takeWhile,
-  auditTime,
-  mergeMap
-} from 'rxjs/operators';
+  skipWhile} from 'rxjs/operators';
 import {
   Store
 } from '@ngrx/store';
@@ -53,20 +40,12 @@ import {
   AppState
 } from '../app.state';
 import {
-  routerNavigatedAction
-} from '@ngrx/router-store';
-import {
   Params
 } from '@angular/router';
 import {
-  getOrderById
-} from '../currentUser/currentuser.action';
-import {
-  hasLoaded
-} from './products.selector';
-import {
   ToastrService
 } from 'ngx-toastr';
+import { FiltersEffect } from '../filters';
 
 
 export interface Filters {
@@ -84,80 +63,17 @@ export class ProductsEffect {
     private store: Store < AppState > ,
     private shop: ShopService,
     private toastr: ToastrService,
-  ) {
-
-    this.store.select(hasLoaded).pipe(tap((value) => {
-      if (value == "success") {
-        console.log("loaded!")
-        this.hasLoaded = true;
-      }
-
-    })).subscribe();
-
-
-
-  }
+    private filters: FiltersEffect
+  ) {}
 
 
 
   url: Params | undefined;
 
-  hasLoaded: boolean = false;
 
-  allFilters: Filters = {
-    lastProductId: undefined,
-    lastOrderId: undefined,
-    lastLoadFilterProducts_key: undefined,
-    lastLoadFilterProducts_filter: undefined
-  }
+ 
 
 
-
-
-  filters$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(routerNavigatedAction),
-      filter((action) => Object.keys(action.payload.routerState.root.children[0].params).length != 0),
-      map((action) => {
-
-        const currentFilters: Filters = {
-          lastProductId: undefined,
-          lastOrderId: undefined,
-          lastLoadFilterProducts_key: undefined,
-          lastLoadFilterProducts_filter: undefined
-        }
-
-        const url = action.payload.routerState.root.children[0].params;
-        if (url['id']) {
-          currentFilters.lastProductId = url['id'];
-          this.allFilters = currentFilters
-          return loadProductById({
-            id: url['id']
-          })
-        }
-        if ((url['ido'])) {
-          currentFilters.lastOrderId = url['ido']
-          this.allFilters = currentFilters
-          return getOrderById()
-        }
-
-        if ((url['producer'])) {
-          currentFilters.lastLoadFilterProducts_key = "producer"
-          currentFilters.lastLoadFilterProducts_filter = url['producer'];
-          this.allFilters = currentFilters
-          return loadFilteredProducts()
-        } else {
-          currentFilters.lastLoadFilterProducts_key = "category"
-          currentFilters.lastLoadFilterProducts_filter = url['category'];
-          this.allFilters = currentFilters
-          return loadFilteredProducts()
-        }
-      }),
-      tap(() => {
-        console.log(this.allFilters)
-      })
-    )
-  );
 
 
 
@@ -167,10 +83,10 @@ export class ProductsEffect {
       switchMap(() => this.store.select(selectAllProducts).pipe(
         skipWhile(data => data.length == 0),
         map(() => {
-          if (this.allFilters.lastLoadFilterProducts_key == "producer" || this.allFilters.lastLoadFilterProducts_key == "category") {
+          if (this.filters.allFilters.lastLoadFilterProducts_key == "producer" || this.filters.allFilters.lastLoadFilterProducts_key == "category") {
             return refillLoadFilteredProduct({
-              key: this.allFilters.lastLoadFilterProducts_key,
-              filter: this.allFilters.lastLoadFilterProducts_filter!
+              key: this.filters.allFilters.lastLoadFilterProducts_key!,
+              filter: this.filters.allFilters.lastLoadFilterProducts_filter!
             })
           } else {
             return failureLoadFilteredProducts()

@@ -1,18 +1,15 @@
 import { ProductsEffect } from './store/products/products.effects';
-import { StoreModule, MetaReducer } from '@ngrx/store';
+import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { storeFreeze} from 'ngrx-store-freeze';
 
 import {
-  StoreRouterConnectingModule,
-  RouterStateSerializer
-} from '@ngrx/router-store';
+  StoreRouterConnectingModule} from '@ngrx/router-store';
 
 
 
 
-import { ModuleWithProviders, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
@@ -51,7 +48,6 @@ import { FormatErrorPipe } from './pipes/format-error.pipe';
 import { FormErrorManagerComponent } from './auth/form-error-manager/form-error-manager.component';
 import { SingleProductComponent } from './shop-main-components/single-product/single-product.component';
 import { SingleCartElementComponent } from './user-components/cart/single-cart-element/single-cart-element.component';
-import { SingleOrderComponent } from './user-components/order-history/single-order/single-order.component';
 import { ProductListComponent } from './shop-main-components/product-list/product-list.component';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { environment } from 'src/environments/environment';
@@ -60,6 +56,7 @@ import {usersReducer } from './store/users/users.reducer';
 import { UsersEffect } from './store/users/users.effects';
 import { currentuserReducer } from './store/currentUser/currentuser.reducer';
 import { currentuserEffect } from './store/currentUser/currentuser.effects';
+import { FiltersEffect } from './store/filters';
 
 
 
@@ -86,7 +83,6 @@ import { currentuserEffect } from './store/currentUser/currentuser.effects';
     FormErrorManagerComponent,
     SingleProductComponent,
     SingleCartElementComponent,
-    SingleOrderComponent,
     ProductListComponent,
     SpinnerComponent
   ],
@@ -102,7 +98,7 @@ import { currentuserEffect } from './store/currentUser/currentuser.effects';
     MatProgressSpinnerModule,
     ToastrModule.forRoot(),
     StoreModule.forRoot({products : productsReducer, currentUser : currentuserReducer, product_detail : singleProductReducer, users : usersReducer, }),
-    EffectsModule.forRoot([ProductsEffect, UsersEffect, currentuserEffect]),
+    EffectsModule.forRoot([ProductsEffect, UsersEffect, currentuserEffect, FiltersEffect]),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
       logOnly: environment.production, // Restrict extension to log-only mode

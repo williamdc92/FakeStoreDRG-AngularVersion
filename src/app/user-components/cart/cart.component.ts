@@ -1,4 +1,4 @@
-import { clearCart } from './../../store/currentUser/currentuser.action';
+
 import { SubscriptionsContainer } from './../../subscription-container';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from 'src/app/providers/auth.service';
@@ -6,10 +6,12 @@ import { UserService, CartElement, orders } from 'src/app/providers/user.service
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { catchError, finalize, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { AppState } from 'src/app/store/app.state';
+
 import { Store } from '@ngrx/store';
-import { addUserOrder, getUserCart, manageUserCart } from 'src/app/store/currentUser/currentuser.action';
-import { UserCart, UserState } from 'src/app/store/currentUser/currentuser.selector';
+import { AppState } from 'src/app/store/app.state';
+import { addUserOrder, clearCart, getUserCart, manageUserCart } from 'src/app/store/currentUser/currentuser.action';
+import { UserCart } from 'src/app/store/currentUser/currentuser.selector';
+
 
 @Component({
   selector: 'app-cart',

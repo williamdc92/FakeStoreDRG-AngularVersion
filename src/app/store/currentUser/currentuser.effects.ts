@@ -10,9 +10,9 @@ import { AppState } from '../app.state';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/providers/auth.service';
 import { Router } from '@angular/router';
-import { ProductsEffect } from '../products/products.effects';
 import { loadProductById } from '../products/products.actions';
 import { UserOrders } from './currentuser.selector';
+import { FiltersEffect } from '../filters';
 
 
 @Injectable() 
@@ -25,7 +25,7 @@ export class currentuserEffect {
       private toastr: ToastrService,
       private auth: AuthService, 
       private router: Router, 
-      private productsEffects : ProductsEffect
+      private filters: FiltersEffect
     ) { }
 
      successMessage = "";
@@ -141,9 +141,9 @@ getOrderById$ = createEffect(() =>
       switchMap(() => this.store.select(UserOrders).pipe(
         skipWhile(data => data?.length == 0),
         map(() => {
-          if (this.productsEffects.allFilters.lastOrderId != undefined) {
+          if (this.filters.allFilters.lastOrderId != undefined) {
             return successGetOrderById({
-              id:this.productsEffects.allFilters.lastOrderId
+              id:this.filters.allFilters.lastOrderId
             })
           } else {
             return failureGetOrderById()
@@ -230,7 +230,7 @@ addValutation$ = createEffect(() =>
 this.actions$.pipe(
   ofType(addValutation),
   switchMap((action) => this.users.addValutation(
-    this.productsEffects.allFilters.lastProductId,
+    this.filters.allFilters.lastProductId,
     action.valutation,
     (localStorage.getItem('token'))
     ).pipe(
@@ -239,7 +239,7 @@ this.actions$.pipe(
           positionClass: "toast-bottom-left"
         });
       }),
-      map (() => loadProductById({ id: this.productsEffects.allFilters.lastProductId}) ),
+      map (() => loadProductById({ id: this.filters.allFilters.lastProductId}) ),
       catchError((err) =>{
         this.toastr.warning(`Cannot add valutation`, 'Error', {
           positionClass: "toast-bottom-left"

@@ -6,7 +6,7 @@ import { orders, UserService } from 'src/app/providers/user.service';
 import { catchError, switchMap, take, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
-import { getUserOrders } from 'src/app/store/currentUser/currentuser.action';
+import { clearOrders, getUserOrders } from 'src/app/store/currentUser/currentuser.action';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app.state';
 import { OrderById } from 'src/app/store/currentUser/currentuser.selector';
@@ -39,7 +39,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy(): void {
-
+  this.store.dispatch(clearOrders());
   }
 
 }

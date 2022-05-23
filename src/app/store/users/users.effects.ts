@@ -17,7 +17,6 @@ import {
 } from './users.actions';
 
 import {
-  from,
   of
 } from 'rxjs';
 import {

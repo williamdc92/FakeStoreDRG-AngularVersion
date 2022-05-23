@@ -5,7 +5,7 @@ import { catchError, Observable, of, switchMap, tap } from 'rxjs';
 import { AuthService } from 'src/app/providers/auth.service';
 import { AppState } from 'src/app/store/app.state';
 import { Store } from '@ngrx/store';
-import { getUserOrders } from 'src/app/store/currentUser/currentuser.action';
+import { clearOrders, getUserOrders } from 'src/app/store/currentUser/currentuser.action';
 import { UserOrders } from 'src/app/store/currentUser/currentuser.selector';
 
 
@@ -35,7 +35,7 @@ export class OrderHistoryComponent implements OnInit, OnDestroy {
   }
       
   ngOnDestroy(): void {
-    //this.store.dispatch(clearOrders());
+    this.store.dispatch(clearOrders());
   }
 
 }
