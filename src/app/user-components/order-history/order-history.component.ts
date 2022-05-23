@@ -5,8 +5,9 @@ import { catchError, Observable, of, switchMap, tap } from 'rxjs';
 import { AuthService } from 'src/app/providers/auth.service';
 import { AppState } from 'src/app/store/app.state';
 import { Store } from '@ngrx/store';
-import { UserOrders, UserState } from 'src/app/store/currentUser/currentuser.selector';
-import { clearOrders, getUserOrders } from 'src/app/store/currentUser/currentuser.action';
+import { getUserOrders } from 'src/app/store/currentUser/currentuser.action';
+import { UserOrders } from 'src/app/store/currentUser/currentuser.selector';
+
 
 @Component({
   selector: 'app-order-history',

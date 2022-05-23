@@ -138,9 +138,7 @@ export class ProductsEffect {
         if ((url['ido'])) {
           currentFilters.lastOrderId = url['ido']
           this.allFilters = currentFilters
-          return getOrderById({
-            id: url['ido']
-          })
+          return getOrderById()
         }
 
         if ((url['producer'])) {

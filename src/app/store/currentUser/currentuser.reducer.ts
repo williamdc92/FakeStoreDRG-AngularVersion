@@ -1,4 +1,4 @@
-import { clearUser, failureLoginUser, loginUser, logoutUser, successLoginUser, failureRegisterUser, successGetUserCart, failureGetUserCart, successGetUserOrders, failureGetUserOrders, failureManageUserCart, failureAddUserOrder, clearCart, clearOrders, getOrderById } from './currentuser.action';
+import { clearUser, failureLoginUser, loginUser, logoutUser, successLoginUser, failureRegisterUser, successGetUserCart, failureGetUserCart, successGetUserOrders, failureGetUserOrders, failureManageUserCart, failureAddUserOrder, clearCart, clearOrders, getOrderById, successGetOrderById, failureGetOrderById } from './currentuser.action';
 import { RefreshToken } from '../../providers/auth.service';
 import { createReducer, on } from '@ngrx/store';
 import { CartElement, orders, User } from 'src/app/providers/user.service';
@@ -79,7 +79,7 @@ export const currentuserReducer = createReducer(
 
     })),
 
-    on (getOrderById, (state, {id}) => ({
+    on (successGetOrderById, (state, {id}) => ({
         ...state,
         currentOrder : state.orders?.find(order => order.id === id )
     })),
@@ -87,7 +87,7 @@ export const currentuserReducer = createReducer(
 
     //Failures
 
-    on(failureLoginUser || failureRegisterUser || failureGetUserCart || failureGetUserOrders || failureManageUserCart || failureAddUserOrder, (state, {err}) => ({
+    on(failureLoginUser || failureRegisterUser || failureGetUserCart || failureGetUserOrders || failureManageUserCart || failureAddUserOrder || failureGetOrderById, (state, {err}) => ({
         ...state,
         error: err,
         status: 'error'

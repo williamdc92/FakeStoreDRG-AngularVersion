@@ -5,8 +5,10 @@ import { AuthService } from 'src/app/providers/auth.service';
 import { orders, UserService } from 'src/app/providers/user.service';
 import { catchError, switchMap, take, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
-import { AppState } from 'src/app/store/app.state';
+
+import { getUserOrders } from 'src/app/store/currentUser/currentuser.action';
 import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
 import { OrderById } from 'src/app/store/currentUser/currentuser.selector';
 
 @Component({
@@ -31,6 +33,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   
 
   ngOnInit(): void {
+    this.store.dispatch(getUserOrders());
     this.order$ = this.store.select(OrderById)
   }
 

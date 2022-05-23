@@ -1,10 +1,10 @@
 import { UserService } from 'src/app/providers/user.service';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { failureLoginUser, loginUser, successLoginUser, logoutUser, clearUser, registerUser, failureRegisterUser, getUserCart, successGetUserCart, failureGetUserCart, getUserOrders, successGetUserOrders, failureGetUserOrders, manageUserCart, failureManageUserCart, addUserOrder, failureAddUserOrder, clearCart, addValutation, failureAddValutation } from './currentuser.action';
+import { failureLoginUser, loginUser, successLoginUser, logoutUser, clearUser, registerUser, failureRegisterUser, getUserCart, successGetUserCart, failureGetUserCart, getUserOrders, successGetUserOrders, failureGetUserOrders, manageUserCart, failureManageUserCart, addUserOrder, failureAddUserOrder, clearCart, addValutation, failureAddValutation, getOrderById, successGetOrderById, failureGetOrderById } from './currentuser.action';
 
 import { of } from 'rxjs';
-import { switchMap, map, catchError, tap, take } from 'rxjs/operators';
+import { switchMap, map, catchError, tap, take, skipWhile } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { AppState } from '../app.state';
 import { ToastrService } from 'ngx-toastr';
@@ -12,6 +12,7 @@ import { AuthService } from 'src/app/providers/auth.service';
 import { Router } from '@angular/router';
 import { ProductsEffect } from '../products/products.effects';
 import { loadProductById } from '../products/products.actions';
+import { UserOrders } from './currentuser.selector';
 
 
 @Injectable() 
@@ -133,6 +134,25 @@ export class currentuserEffect {
     )
   )
 );
+
+getOrderById$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(getOrderById),
+      switchMap(() => this.store.select(UserOrders).pipe(
+        skipWhile(data => data?.length == 0),
+        map(() => {
+          if (this.productsEffects.allFilters.lastOrderId != undefined) {
+            return successGetOrderById({
+              id:this.productsEffects.allFilters.lastOrderId
+            })
+          } else {
+            return failureGetOrderById()
+          }
+        })
+
+      ))
+    )
+  );
 
 
 getUserOrders$ = createEffect(() =>

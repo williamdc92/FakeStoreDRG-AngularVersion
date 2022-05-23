@@ -23,7 +23,9 @@ export const failureGetUserCart = createAction('[Current User Component] Failure
 export const getUserOrders = createAction('[Current User Component] Getting User Orders');
 export const clearOrders = createAction('[Current User Component] Clearing User Orders');
 
-export const getOrderById = createAction('[Current User Component] Get Order by ID', props<{id: string}>());
+export const getOrderById = createAction('[Current User Component] Get Order by ID');
+export const successGetOrderById = createAction('[Current User Component] Success Get Order by ID', props<{id: string}>());
+export const failureGetOrderById = createAction('[Current User Component] Failure Get Order by ID')
 export const clearOrderById = createAction('[Current User Component] Clear Order by ID');
 
 export const successGetUserOrders = createAction('[Current User Component] Success Get User Orders', props<{orders: orders []}>());
