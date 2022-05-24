@@ -1,7 +1,7 @@
 
 
 import { createReducer, on } from '@ngrx/store';
-import { RootObject } from 'src/app/providers/shop.service';
+import { RootObject } from 'src/app/core/providers/shop.service';
 import { loadProducts, loadProductById, successLoadProduct, successLoadSingleProduct, failureLoadProducts, failureLoadSingleProduct, clearProduct, cleanFilteredProducts, loadFilteredProducts, refillLoadFilteredProduct, failureLoadFilteredProducts } from './products.actions';
 
 export interface ProductState {

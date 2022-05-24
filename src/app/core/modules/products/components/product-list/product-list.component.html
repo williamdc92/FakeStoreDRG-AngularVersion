@@ -1,0 +1,6 @@
+
+<ng-container>
+    <div class="row" *ngFor="let product of result | filter:this.shop.searchTerm">
+        <single-product (isAddingIncart)="addInCart($event)" (isRemovingFromcart)="removeElement($event)" [product]="product" [isInCart]="isInCart(product.id)"></single-product>
+    </div>
+</ng-container>

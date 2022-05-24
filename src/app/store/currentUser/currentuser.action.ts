@@ -1,8 +1,8 @@
-import { CartElement, orders } from '../../providers/user.service';
+import { CartElement, orders } from '../../core/providers/user.service';
 import { createAction, props } from '@ngrx/store';
-import { SuccessfulLogin } from 'src/app/providers/auth.service';
+import { SuccessfulLogin } from 'src/app/core/providers/auth.service';
 import { Observable } from 'rxjs';
-import { Valutation } from 'src/app/providers/shop.service';
+import { Valutation } from 'src/app/core/providers/shop.service';
 
 export const loginUser =  createAction('[Current User Component] Load User', props<{validationForm:any}>());
 export const registerUser = createAction('[Current User Component] Register User', props<{validationForm:any}>());

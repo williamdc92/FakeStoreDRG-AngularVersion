@@ -1,4 +1,4 @@
-import { RootObject } from 'src/app/providers/shop.service';
+import { RootObject } from 'src/app/core/providers/shop.service';
 import { createAction, props } from '@ngrx/store';
 import { Observable } from 'rxjs';
 

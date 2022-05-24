@@ -1,76 +1,48 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './shop-main-components/home/home.component';
-import {ProducerComponent} from './shop-main-components/producer/producer.component';
-import {CategoryComponent} from './/shop-main-components/category/category.component'
-import { ProductDetailComponent } from './shop-main-components/product-detail/product-detail.component';
-import { AuthComponent } from './auth/auth.component';
-import { PagenotfoundComponent } from './pages/pagenotfound/pagenotfound.component';
-import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
-import { CartComponent } from './user-components/cart/cart.component';
-import { OrderHistoryComponent } from './user-components/order-history/order-history.component';
-import { AuthguardService } from './providers/guards/authguard.service';
-import { OrderDetailComponent } from './user-components/order-history/order-detail/order-detail.component';
+import { PagenotfoundComponent } from '../app/core/pages/pagenotfound/pagenotfound.component';
+import { ForbiddenComponent } from '../app/core/pages/forbidden/forbidden.component';
+
+import { AuthguardService } from './core/guards/authguard.service';
+
 
 
 
 const routes: Routes = [
 
-  { path: 'admins', loadChildren: () => import('./admins/admins.module').then(m => m.AdminsModule) },
-
   {
-  path:'',
-  redirectTo: 'products',
-  pathMatch: 'full'
-  },
+    path:'',
+    redirectTo: 'products',
+    pathMatch: 'full'
+    },
 
-  {
-    path:'products',
-    component: HomeComponent
-  },
+//admins
 
-  {
-    path:'products/producer/:producer',
-    component: ProducerComponent
-  },
+{ path: 'admins', loadChildren: () => import('./core/modules/admin/admins.module').then(m => m.AdminsModule) },
 
-  {
-    path: 'products/category/:category',
-    component: CategoryComponent
-  },
+  
+//products
 
-  {
-    path:'products/product/:id',
-    component :ProductDetailComponent
-  },
+ { path: 'products', loadChildren: () => import('./core/modules/products/products.module').then(m => m.ProductsModule) },
 
-  {
-    path:'auth',
-    component: AuthComponent
-  },
+//cart
 
-  {
-    path:'cart',
-    component: CartComponent,
-    canActivate : [AuthguardService]
-  },
+ { path: 'cart', loadChildren: () => import('./core/modules/cart/cart.module').then(m => m.CartModule) },
 
-  {
-    path:'orders',
-    component:OrderHistoryComponent,
-    canActivate : [AuthguardService]
-  },
+ //auth
 
-  {
-    path: 'orders/order/:ido',
-    component:OrderDetailComponent,
-    canActivate : [AuthguardService]
-  },
+ { path: 'auth', loadChildren: () => import('./core/modules/authentication/authentication.module').then(m => m.AuthenticationModule) },
+
+  //pages
 
   {
     path:'forbidden',
     component: ForbiddenComponent
   },
+
+  { path: 'orders', loadChildren: () => import('./core/modules/orders/orders.module').then(m => m.OrdersModule) },
+
+
 
   {
     path:'**',

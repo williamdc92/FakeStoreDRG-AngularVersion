@@ -1,5 +1,5 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, OnInit } from '@angular/core';
-import { AuthService } from './providers/auth.service';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
+import { AuthService } from './core/providers/auth.service';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppState } from './store/app.state';
@@ -21,8 +21,8 @@ export class AppComponent implements OnInit{
 
   ngOnInit() {
     this.store.dispatch(loadProducts()); //da spostare dopo aver implementato correttamente lazy load
-    
   }
+
 
   
 }

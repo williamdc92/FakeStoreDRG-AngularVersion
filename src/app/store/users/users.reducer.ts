@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { User } from 'src/app/providers/user.service';
+import { User } from 'src/app/core/providers/user.service';
 import { clearUsers, failureLoadUsers, loadUsers, successLoadUsers } from './users.actions';
 
 

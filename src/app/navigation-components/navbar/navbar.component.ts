@@ -1,8 +1,8 @@
-import { SubscriptionsContainer } from './../../subscription-container';
+import { SubscriptionsContainer } from '../../core/utils/unsubscriber/subscription-container';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { catchError, map, take, tap } from 'rxjs/operators';
-import { AuthService } from 'src/app/providers/auth.service';
-import { ShopService } from 'src/app/providers/shop.service';
+import { AuthService } from 'src/app/core/providers/auth.service';
+import { ShopService } from 'src/app/core/providers/shop.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router'
 import { Observable, of, Subscription } from 'rxjs';

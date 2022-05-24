@@ -1,11 +1,3 @@
-import { SubscriptionsContainer } from 'src/app/subscription-container';
-import {
-    selectAllProducts,
-    selectProductsFiltered
-  } from 'src/app/store/products/products.selector';
-  import {
-    ShopService
-  } from 'src/app/providers/shop.service';
   import {
     Injectable, OnDestroy
   } from '@angular/core';
@@ -17,46 +9,21 @@ import {
 
   
   import {
-    from,
-    iif,
-    of ,
-    pipe,
     Subject
   } from 'rxjs';
   import {
-    switchMap,
     map,
-    catchError,
     tap,
-    take,
-    withLatestFrom,
     filter,
-    skipWhile,
-    retry,
-    takeWhile,
-    auditTime,
-    mergeMap,
     takeUntil
   } from 'rxjs/operators';
-  import {
-    Store
-  } from '@ngrx/store';
-  import {
-    AppState
-  } from './app.state';
   import {
     routerNavigatedAction
   } from '@ngrx/router-store';
   import {
-    Params
-  } from '@angular/router';
-  import {
     getOrderById
   } from './currentUser/currentuser.action';
  
-  import {
-    ToastrService
-  } from 'ngx-toastr';
 import { loadFilteredProducts, loadProductById } from './products/products.actions';
   
 
@@ -86,21 +53,26 @@ allFilters: Filters = {
     lastLoadFilterProducts_filter: undefined
   }
 
-
-  filters$ = createEffect(() =>
+filters$ = createEffect(() =>
   this.actions$.pipe(
     ofType(routerNavigatedAction),
-    filter((action) => Object.keys(action.payload.routerState.root.children[0].params).length != 0),
+    // tap((action => {
+    //   const state = action.payload.routerState
+    //   const root = state.root
+    //   const child = root.firstChild?.firstChild
+    //   const key = child?.params
+    // })),
+    filter((action) => action.payload.routerState.root.firstChild?.firstChild !== undefined),
     map((action) => {
 
       const currentFilters: Filters = {
-        lastProductId: undefined,
-        lastOrderId: undefined,
-        lastLoadFilterProducts_key: undefined,
-        lastLoadFilterProducts_filter: undefined
+        lastProductId: undefined, //single Product Details By id
+        lastOrderId: undefined, //single Order Details By id
+        lastLoadFilterProducts_key: undefined, //producer || category
+        lastLoadFilterProducts_filter: undefined //name of the producer || name of the categy
       }
 
-      const url = action.payload.routerState.root.children[0].params;
+      const url = action.payload.routerState.root.firstChild?.firstChild?.params!
       if (url['id']) {
         currentFilters.lastProductId = url['id'];
         this.allFilters = currentFilters
@@ -125,10 +97,6 @@ allFilters: Filters = {
         this.allFilters = currentFilters
         return loadFilteredProducts()
       }
-    }),
-   
-    tap(() => {
-      console.log(this.allFilters)
     }), takeUntil(this.ngDestroyed$),
   )
 );

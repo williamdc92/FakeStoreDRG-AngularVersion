@@ -2,7 +2,7 @@ import {
   selectAllProducts} from 'src/app/store/products/products.selector';
 import {
   ShopService
-} from 'src/app/providers/shop.service';
+} from 'src/app/core/providers/shop.service';
 import {
   Injectable, OnDestroy
 } from '@angular/core';

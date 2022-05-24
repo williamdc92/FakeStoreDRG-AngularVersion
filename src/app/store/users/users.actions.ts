@@ -1,4 +1,4 @@
-import { User } from 'src/app/providers/user.service';
+import { User } from 'src/app/core/providers/user.service';
 import { createAction, props } from '@ngrx/store';
 
 export const loadUsers =  createAction('[Users Component] Load Users');

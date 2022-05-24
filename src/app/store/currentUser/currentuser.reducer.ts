@@ -1,7 +1,7 @@
 import { clearUser, failureLoginUser, loginUser, logoutUser, successLoginUser, failureRegisterUser, successGetUserCart, failureGetUserCart, successGetUserOrders, failureGetUserOrders, failureManageUserCart, failureAddUserOrder, clearCart, clearOrders, getOrderById, successGetOrderById, failureGetOrderById } from './currentuser.action';
-import { RefreshToken } from '../../providers/auth.service';
+import { RefreshToken } from '../../core/providers/auth.service';
 import { createReducer, on } from '@ngrx/store';
-import { CartElement, orders, User } from 'src/app/providers/user.service';
+import { CartElement, orders, User } from 'src/app/core/providers/user.service';
 
 export interface CurrentUserState {
     currentUser: string | undefined;

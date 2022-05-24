@@ -1,4 +1,4 @@
-import { UserService } from 'src/app/providers/user.service';
+import { UserService } from 'src/app/core/providers/user.service';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { failureLoginUser, loginUser, successLoginUser, logoutUser, clearUser, registerUser, failureRegisterUser, getUserCart, successGetUserCart, failureGetUserCart, getUserOrders, successGetUserOrders, failureGetUserOrders, manageUserCart, failureManageUserCart, addUserOrder, failureAddUserOrder, clearCart, addValutation, failureAddValutation, getOrderById, successGetOrderById, failureGetOrderById } from './currentuser.action';
@@ -8,7 +8,7 @@ import { switchMap, map, catchError, tap, take, skipWhile, takeUntil } from 'rxj
 import { Store } from '@ngrx/store';
 import { AppState } from '../app.state';
 import { ToastrService } from 'ngx-toastr';
-import { AuthService } from 'src/app/providers/auth.service';
+import { AuthService } from 'src/app/core/providers/auth.service';
 import { Router } from '@angular/router';
 import { loadProductById } from '../products/products.actions';
 import { UserOrders } from './currentuser.selector';

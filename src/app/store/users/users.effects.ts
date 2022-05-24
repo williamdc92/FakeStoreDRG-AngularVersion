@@ -1,6 +1,6 @@
 import {
   UserService
-} from 'src/app/providers/user.service';
+} from 'src/app/core/providers/user.service';
 import {
   Injectable
 } from '@angular/core';
