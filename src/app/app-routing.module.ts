@@ -4,6 +4,7 @@ import { PagenotfoundComponent } from '../app/core/pages/pagenotfound/pagenotfou
 import { ForbiddenComponent } from '../app/core/pages/forbidden/forbidden.component';
 
 import { AuthguardService } from './core/guards/authguard.service';
+import { DispatcherService } from './core/guards/dispatcher.service';
 
 
 
@@ -18,20 +19,39 @@ const routes: Routes = [
 
 //admins
 
-{ path: 'admins', loadChildren: () => import('./core/modules/admin/admins.module').then(m => m.AdminsModule) },
+{ path: 'admins', 
+  canActivate : [DispatcherService],
+  canDeactivate : [DispatcherService],
+  loadChildren: () => import('./core/modules/admin/admins.module').then(m => m.AdminsModule) },
 
   
 //products
 
- { path: 'products', loadChildren: () => import('./core/modules/products/products.module').then(m => m.ProductsModule) },
+ {path: 'products', 
+  canActivate : [DispatcherService],
+  canDeactivate : [DispatcherService],
+  loadChildren: () => import('./core/modules/products/products.module').then(m => m.ProductsModule) },
 
 //cart
 
- { path: 'cart', loadChildren: () => import('./core/modules/cart/cart.module').then(m => m.CartModule) },
+ { path: 'cart',
+  canActivate : [DispatcherService],
+  canDeactivate : [DispatcherService],
+  loadChildren: () => import('./core/modules/cart/cart.module').then(m => m.CartModule) },
 
  //auth
 
- { path: 'auth', loadChildren: () => import('./core/modules/authentication/authentication.module').then(m => m.AuthenticationModule) },
+ { path: 'auth', 
+   canActivate : [DispatcherService],
+   canDeactivate : [DispatcherService],
+   loadChildren: () => import('./core/modules/authentication/authentication.module').then(m => m.AuthenticationModule) },
+
+   //orders 
+   
+   { path: 'orders', 
+   canActivate : [DispatcherService],
+   canDeactivate : [DispatcherService],
+   loadChildren: () => import('./core/modules/orders/orders.module').then(m => m.OrdersModule) },
 
   //pages
 
@@ -40,8 +60,7 @@ const routes: Routes = [
     component: ForbiddenComponent
   },
 
-  { path: 'orders', loadChildren: () => import('./core/modules/orders/orders.module').then(m => m.OrdersModule) },
-
+ 
 
 
   {

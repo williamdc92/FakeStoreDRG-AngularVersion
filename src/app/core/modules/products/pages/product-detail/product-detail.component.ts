@@ -66,11 +66,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
 
     this.product$ = this.getProductData();
 
-    if (localStorage.getItem('token')) 
-    {
-      this.store.dispatch(getUserCart())
-      this.getUserCart().subscribe();
-    }
+    if (localStorage.getItem('token')) this.getUserCart().subscribe();
 
   }
 
@@ -117,7 +113,6 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.store.dispatch(clearProduct());
-    this.store.dispatch(clearCart());
+   
   }
 }

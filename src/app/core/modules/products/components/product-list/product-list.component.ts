@@ -40,14 +40,11 @@ export class ProductListComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit(): void {
-    if (localStorage.getItem('token')) {
-      this.store.dispatch(getUserCart())
-     this.getData().subscribe();
-    }
+    if (localStorage.getItem('token')) this.getData().subscribe();
+    
   }
 
   ngOnDestroy(): void {
-    this.store.dispatch(clearCart());
   }
 
 

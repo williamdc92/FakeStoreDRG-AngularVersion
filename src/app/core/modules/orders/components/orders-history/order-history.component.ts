@@ -25,7 +25,6 @@ export class OrderHistoryComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.orders$ = this.getData();
-    this.store.dispatch(getUserOrders());
   }
 
 
@@ -34,7 +33,7 @@ export class OrderHistoryComponent implements OnInit, OnDestroy {
   }
       
   ngOnDestroy(): void {
-    //this.store.dispatch(clearOrders());
+ 
   }
 
 }

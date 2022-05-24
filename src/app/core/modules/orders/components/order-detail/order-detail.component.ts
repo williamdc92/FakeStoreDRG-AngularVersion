@@ -18,8 +18,6 @@ import { OrderById } from 'src/app/store/currentUser/currentuser.selector';
 })
 export class OrderDetailComponent implements OnInit, OnDestroy {
 
-  id:string = "";
-  tot:number = 0;
   order$ : Observable<orders| undefined> = new Observable;
 
   constructor( 
@@ -33,25 +31,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   
 
   ngOnInit(): void {
-    this.order$ = this.checkData();
+    this.order$ = this.store.select(OrderById);
   }
-
-
-  checkData() : Observable<orders | undefined>  {
-    return this.store.select(OrderById).pipe(
-      tap((value)=> {
-        if (!value) {
-          console.log("empty on refresh")
-          this.store.dispatch(getUserOrders());
-        }
-      }),
-      switchMap(() => this.store.select(OrderById))
-    )
-  }
-
 
   ngOnDestroy(): void {
-  this.store.dispatch(clearOrders());
+
   }
 
 }

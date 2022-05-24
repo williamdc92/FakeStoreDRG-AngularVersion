@@ -20,7 +20,7 @@ export class AppComponent implements OnInit{
 
 
   ngOnInit() {
-    this.store.dispatch(loadProducts()); //da spostare dopo aver implementato correttamente lazy load
+
   }
 
 

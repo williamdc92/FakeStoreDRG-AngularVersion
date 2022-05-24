@@ -9,12 +9,6 @@ import { GrantPComponent } from './pages/grant-p/grant-p.component';
 
 
 const routes: Routes = [
-  { 
-    path:'',
-    redirectTo: 'grant_permissions',
-    pathMatch: 'full'
-   },
-
   {
     path:'grant_permissions',
     component:GrantPComponent,

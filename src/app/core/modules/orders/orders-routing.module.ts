@@ -1,3 +1,4 @@
+import { DispatcherService } from './../../guards/dispatcher.service';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthguardService } from '../../guards/authguard.service';
@@ -9,7 +10,6 @@ const routes: Routes = [
   {
     path: '',
     component: OrderHistoryComponent,
-    canActivate : [AuthguardService]
   },
   {
     path: 'order/:ido',

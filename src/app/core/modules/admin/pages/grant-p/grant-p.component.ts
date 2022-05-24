@@ -27,7 +27,6 @@ export class GrantPComponent implements OnInit, OnDestroy {
      ) { }
 
   ngOnInit(): void {
-  this.store.dispatch(loadUsers()); 
   this.store.select(getUsers)
   this.users$ = this.getData();
   }
@@ -43,7 +42,7 @@ export class GrantPComponent implements OnInit, OnDestroy {
   }
   
   ngOnDestroy(): void {
-    this.store.dispatch(clearUsers())
+    
   }
 
 }

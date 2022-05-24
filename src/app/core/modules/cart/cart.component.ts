@@ -31,11 +31,10 @@ export class CartComponent implements OnInit, OnDestroy {
     private store: Store<AppState>) { }
 
   ngOnDestroy(): void {
-  this.store.dispatch(clearCart());
+  
   }
 
   ngOnInit(): void {
-    this.store.dispatch(getUserCart())
     this.getCart().subscribe();
     this.total$ = this.getTotal();
   }

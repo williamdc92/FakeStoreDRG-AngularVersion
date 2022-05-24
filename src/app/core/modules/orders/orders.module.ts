@@ -19,12 +19,4 @@ import { OrdersRoutingModule } from './orders-routing.module';
     RouterModule
   ]
 })
-export class OrdersModule {
-
-  constructor(
-
-  ) {console.log("test")}
-
-
-  
- }
+export class OrdersModule { }

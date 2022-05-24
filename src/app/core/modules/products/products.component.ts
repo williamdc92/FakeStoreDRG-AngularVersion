@@ -65,14 +65,9 @@ export class ProductsComponent implements OnInit {
   
 
   ngOnInit() {
-    this.store.dispatch(loadProducts());
-    this.allProducts$ = this.getData();
     
-  }
-
-
-  getData() : Observable<RootObject []> {
-    return this.store.select(selectAllProducts);
+    this.allProducts$ = this.store.select(selectAllProducts);
+    
   }
 
 }
