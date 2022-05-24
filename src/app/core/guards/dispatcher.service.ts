@@ -1,3 +1,4 @@
+import { selectAllProducts } from './../../store/products/products.selector';
 import {
   Injectable
 } from '@angular/core';
@@ -12,6 +13,7 @@ import { AppState } from 'src/app/store/app.state';
 import { clearCart, clearOrders, getUserCart, getUserOrders } from 'src/app/store/currentUser/currentuser.action';
 import { clearProduct, loadProducts } from 'src/app/store/products/products.actions';
 import { clearUsers, loadUsers } from 'src/app/store/users/users.actions';
+import { tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -24,9 +26,6 @@ export class DispatcherService implements CanActivate, CanDeactivate < any > {
 
   public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const url = state.url;
-    if (url)  this.store.dispatch(loadProducts());
-
-  
     if (url.indexOf("admins") > -1) {this.store.dispatch(loadUsers());}
     if (url.indexOf("auth") > -1) {}
     if (url.indexOf("orders") > -1) this.store.dispatch(getUserOrders());

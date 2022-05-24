@@ -16,7 +16,9 @@ export class AppComponent implements OnInit{
 
 
 
-  constructor(private auth: AuthService, private router: Router, private store : Store<AppState>) {}
+  constructor(private store : Store<AppState>) {
+    this.store.dispatch(loadProducts())
+  }
 
 
   ngOnInit() {
