@@ -1,6 +1,7 @@
 import {
   Component,
-  OnInit
+  OnInit,
+  ViewChild
 } from '@angular/core';
 
 //import { RootObject, ShopService } from '../admins/admins-component/src/app/providers/shop.service';
@@ -12,6 +13,8 @@ import {
 import {
   Store
 } from '@ngrx/store';
+import { AgGridAngular } from 'ag-grid-angular';
+import { CellClickedEvent, ColDef } from 'ag-grid-community';
 import {
   Observable} from 'rxjs';
 import {
@@ -27,6 +30,7 @@ import {
 import {
   selectAllProducts
 } from 'src/app/store/products/products.selector';
+import { CellCustomButtonComponent } from '../../components/cell-custom-button/cell-custom-button.component';
 
 @Component({
   selector: 'app-edit-db',
@@ -40,6 +44,8 @@ export class EditDbComponent implements OnInit {
   sendRequest$: Observable < RootObject[] > = new Observable;
   isAdding: boolean = true;
   isRemoving: boolean = false;
+
+  @ViewChild(AgGridAngular) agGrid! : AgGridAngular
 
   constructor(
     public shop: ShopService,
@@ -70,13 +76,57 @@ export class EditDbComponent implements OnInit {
     }))
   }
 
-  removeProduct = (idp: string) => {
-    this.store.dispatch(manageDb({
-      request$: this.shop.deleteProductById(idp)
-    }))
+  
 
-  }
 
+  onGridReady () {
+   }
+
+ 
+   onCellClicked = (event: CellClickedEvent) => {
+  
+   }
+ 
+ 
+   colDefs: ColDef[] = [
+    {
+      field: "id"
+    }
+    ,
+ 
+     {
+       field: "title",
+       sortable: true,
+       filter: true,
+     },
+ 
+     {
+       field: "price",
+       sortable: true,
+       filter: true,
+       cellRenderer: function (params: {value: string;}) {
+         return '<span><i class="material-icons" style="font-size:17px">euro</i>' + params.value + '</span>'
+       }
+     },
+ 
+     {
+       field: "category",
+       sortable: true,
+       filter: true
+     },
+ 
+     {
+       field: "producer",
+       sortable: true,
+       filter: true,
+     },
+
+     {
+       field : "Remove Product",
+       cellRendererFramework : CellCustomButtonComponent
+     }
+   ]
+ 
 
 
 

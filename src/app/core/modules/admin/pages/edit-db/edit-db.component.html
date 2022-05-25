@@ -69,41 +69,19 @@
             class="btn btn-primary btn-lg">Add</button>
         </div>
       </form>
-
-
-
     </div>
   </div>
 </div>
 
-<div *ngIf="isRemoving" class="row flex-lg-nowrap">
+<div *ngIf="isRemoving" class="row flex-lg-nowrap justify-content-center align-items-center">
+  <ag-grid-angular
+  [rowData]="products$ | async"
+  [columnDefs]="colDefs"
+  [animateRows]="true"
+  (cellClicked)="onCellClicked($event)"
+  (gridReady)="onGridReady()"
+  style = "height: 500px; width: 80%; margin-top:2rem; margin-bottom:2rem;"
+  class="ag-theme-alpine"
+  ></ag-grid-angular>
 
-  <div  class="col mb-3 removing-table">
-    <div class="e-table">
-      <div class="tab_drg main table-responsive table-lg mt-3">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th class="text-center">Name</th>
-              <th class="text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <div *ngIf="(products$ | async) as products">
-              <tr *ngFor="let product of products">
-                <td class="text-nowrap text-center">{{product.title}}</td>
-                <td class="text-center text-center">
-                  <div class="btn-group align-top">
-
-                    <button (click)="removeProduct(product.id)" class="btn btn-sm btn-warning">Remove Product</button>
-
-                  </div>
-                </td>
-              </tr>
-            </div>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 </div>

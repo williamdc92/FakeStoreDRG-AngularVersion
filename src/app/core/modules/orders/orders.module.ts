@@ -4,19 +4,29 @@ import { OrderHistoryComponent } from './components/orders-history/order-history
 import { NgModule, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+
 import { OrdersRoutingModule } from './orders-routing.module';
+import { AgGridModule } from 'ag-grid-angular';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule } from '@angular/forms';
+import { AngularEmojisModule } from 'angular-emojis';
+
 
 
 
 @NgModule({
   declarations: [
     OrderHistoryComponent,
-    OrderDetailComponent
+    OrderDetailComponent,
   ],
   imports: [
     CommonModule,
     OrdersRoutingModule,
-    RouterModule
-  ]
+    RouterModule,
+    AgGridModule,
+    AngularEmojisModule 
+    
+  ],
+
 })
 export class OrdersModule { }

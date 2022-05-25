@@ -5,45 +5,19 @@
     </div>
 </ng-template>
 
-<div *ngIf="(orders$ | async) as orders" class="container mt-5 main">
-    <div *ngIf="(orders.length > 0) else empty" class="d-flex justify-content-center row">
-        <div class="col-md-10">
-            <div class="rounded">
-                <div class="table-responsive table-borderless">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th class="text-center">
-                                    <div class="toggle-btn">
-                                        <div class="inner-circle"></div>
-                                    </div>
-                                </th>
-                                <th class="text-center">Order #</th>
-                                <th class="text-center">Total</th>
-                                <th class="text-center">Created</th>
-                                <th></th>
-                            </tr>
-                        </thead>
+<div class="grid-container">
+    
+<ag-grid-angular
+[rowData]="orders$ | async"
+[columnDefs]="colDefs"
+[animateRows]="true"
+(cellClicked)="onCellClicked($event)"
+(gridReady)="onGridReady()"
+style = "height: 500px; width: 75%; margin-top:2rem; margin-bottom:2rem;"
+class="ag-theme-alpine"
+></ag-grid-angular>
 
-                        <tbody *ngFor="let order of orders" class="table-body">
-                            
 
-                            <tr class="cell-1">
-                                <td class="text-center">
-                                    <div class="toggle-btn">
-                                        <div class="inner-circle"></div>
-                                    </div>
-                                </td>
-                                <td [routerLink]="['/orders/order/'+order?.id]" class="text-center"><a [routerLink]="['/orders/order/'+order?.id]" >{{order?.id}}</a></td>
-                                <td class="text-center">€ {{order?.total}}</td>
-                                <td class="text-center">{{order?.date | date}}</td>
-                                <td><i class="fa fa-ellipsis-h text-black-50"></i></td>
-                            </tr>
-                            
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
+
+

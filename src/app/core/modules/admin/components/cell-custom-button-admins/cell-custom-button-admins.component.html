@@ -1,0 +1,2 @@
+<button (click)="changeAdminStatus()" *ngIf="!isAdmin()" class="btn btn-sm btn-primary">Make Admin</button>
+<button [disabled]="currentAdmin()" (click)="changeAdminStatus()" *ngIf="isAdmin()" class="btn btn-sm btn-primary">Remove Admin</button>

@@ -48,6 +48,8 @@ export interface orders {
   total: number;
   items: CartElement[];
   id:string;
+  evaded: string;
+  nations : string;
 }
 
 

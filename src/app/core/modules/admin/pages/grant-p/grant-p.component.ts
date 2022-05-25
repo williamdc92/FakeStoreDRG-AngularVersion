@@ -1,21 +1,22 @@
 
 import { AuthService } from 'src/app/core/providers/auth.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UserService, User } from 'src/app/core/providers/user.service';
-import { ToastrService } from 'ngx-toastr';
-import { SubscriptionsContainer } from 'src/app/core/utils/unsubscriber/subscription-container';
-import { Observable, catchError, of, tap, take, switchMap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app.state';
-import { changeAdminStatus, clearUsers, loadUsers } from 'src/app/store/users/users.actions';
-import { getUsers, getUsersState } from 'src/app/store/users/users.selector';
+import { changeAdminStatus } from 'src/app/store/users/users.actions';
+import { getUsers } from 'src/app/store/users/users.selector';
+import { ColDef } from 'ag-grid-community';
+import { CellCustomButtonComponent } from '../../components/cell-custom-button/cell-custom-button.component';
+import { CellCustomButtonAdminsComponent } from '../../components/cell-custom-button-admins/cell-custom-button-admins.component';
 
 @Component({
   selector: 'app-grant-p',
   templateUrl: './grant-p.component.html',
   styleUrls: ['./grant-p.component.css']
 })
-export class GrantPComponent implements OnInit, OnDestroy {
+export class GrantPComponent implements OnInit {
   
   users$ : Observable<User[] | undefined> = new Observable;
   currentId = this.auth.analyzeToken?.user_id;
@@ -27,22 +28,46 @@ export class GrantPComponent implements OnInit, OnDestroy {
      ) { }
 
   ngOnInit(): void {
-  this.store.select(getUsers)
-  this.users$ = this.getData();
+  this.users$ = this.store.select(getUsers);
   }
 
-  
 
-  getData() : Observable<User [] | undefined>   {
-    return this.store.select(getUsers);
+
+  colDefs: ColDef[] = [
+    {
+      field: "id"
     }
+    ,
+ 
+     {
+       field: "name",
+       sortable: true,
+       filter: true,
+     },
+ 
+     {
+       field: "surname",
+       sortable: true,
+       filter: true
+     },
+ 
+     {
+       field: "email",
+       filter: true
+     },
+ 
+     {
+       field: "isAdmin",
+       sortable: true,
+       filter: true,
+     },
 
-  changeAdminStatus = (idu:string) => {
-    this.store.dispatch(changeAdminStatus({id:idu}))
-  }
+     {
+       field : "Change Status",
+       cellRendererFramework : CellCustomButtonAdminsComponent
+     }
+   ]
   
-  ngOnDestroy(): void {
-    
-  }
+
 
 }
