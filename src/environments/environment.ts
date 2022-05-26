@@ -4,7 +4,7 @@
 
 export const environment = {
   production: true,
-  host: `http://localhost:5000`
+  host: `https://servershopwilliam.herokuapp.com`
 };
 
 export const key = "Basic d2ViLXN0YWdlLmVhdHNyZWFkeS5jb206WTVTMEpWdDV4WGFCdDhZaA==";

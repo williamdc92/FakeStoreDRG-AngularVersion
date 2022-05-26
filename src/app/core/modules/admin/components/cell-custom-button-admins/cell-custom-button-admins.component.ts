@@ -18,7 +18,6 @@ export class CellCustomButtonAdminsComponent implements OnInit {
   currentId = this.auth.analyzeToken?.user_id;
   constructor(
     private store: Store < AppState >,
-    private shop : ShopService,
     private auth : AuthService
   ) { }
 
@@ -33,7 +32,6 @@ export class CellCustomButtonAdminsComponent implements OnInit {
   }
 
   isAdmin() {
-    console.log(this.params.data.isAdmin)
     if (this.params.data.isAdmin) return true
     else return false
   }
@@ -42,7 +40,6 @@ export class CellCustomButtonAdminsComponent implements OnInit {
   }
 
   changeAdminStatus = () => {
-    console.log(this.params.data.id)
     this.store.dispatch(changeAdminStatus({id:this.params.data.id}))
   }
 
