@@ -1,7 +1,6 @@
 import {
   Component,
   OnInit,
-  OnDestroy,
   ViewChild
 } from '@angular/core';
 import {
@@ -9,12 +8,7 @@ import {
   UserService
 } from 'src/app/core/providers/user.service';
 import {
-  catchError,
-  Observable,
-  of ,
-  switchMap,
-  tap
-} from 'rxjs';
+  Observable} from 'rxjs';
 import {
   AuthService
 } from 'src/app/core/providers/auth.service';
@@ -31,16 +25,10 @@ import {
   UserOrders
 } from 'src/app/store/currentUser/currentuser.selector';
 import {
-  CellClickedEvent,
-  ColDef,
-  GridOptions
-} from 'ag-grid-community';
+  CellClickedEvent} from 'ag-grid-community';
 import {
   Router
 } from '@angular/router';
-import {
-   AngularEmojisModule
-  } from 'angular-emojis';
 
 
 
@@ -51,46 +39,61 @@ import {
 })
 export class OrderHistoryComponent implements OnInit {
 
-  
-  orders$: Observable < orders[] | undefined > = new Observable;
 
-  test = 
-  {
-    date: "25/05/2022",
-    total: 1000,
-    id: "test",
-    evaded: "false",
-    nations: "United States"
-  }
-  
-  @ViewChild(AgGridAngular) agGrid! : AgGridAngular
+  orders$: Observable < orders[] | undefined > = new Observable;
+  @ViewChild(AgGridAngular) agGrid!: AgGridAngular
 
 
   constructor(
     public user: UserService,
     public auth: AuthService,
     private router: Router,
-    private store: Store < AppState >) {}
+    private store: Store < AppState > ) {}
 
   ngOnInit(): void {
     this.orders$ = this.getData();
-    
+
   }
 
   getData(): Observable < orders[] | undefined > {
     return this.store.select(UserOrders).pipe(
-      
+
     );
   }
 
 
   //GRID_OPTIONS
 
-  onGridReady () {
-  }
+  onGridReady() {}
 
   onCellClicked = (event: CellClickedEvent) => {
     this.router.navigate(['/orders/order/' + event.data.id]);
+  }
+
+  formatSum(number: number) {
+    return Number(number).toLocaleString("en-GB", {
+      minimumFractionDigits: 2
+    }) + "€";
+  }
+
+  formatDate(date: Date) {
+    return date.toLocaleString('en-GB', {
+      timeZone: 'UTC'
+    });
+  }
+
+  chooseNationIcon(nation: string) {
+
+    let flag = undefined;
+
+    nation == 'Spain' ? flag = "es" :
+      nation == 'Italy' ? flag = "it" :
+      nation == 'England' ? flag = "gb" :
+      nation == 'Germany' ? flag = "de" :
+      nation == 'France' ? flag = "fr" :
+      nation == 'United States' ? flag = "us" :
+      undefined;
+    return flag;
   }
 
 
@@ -99,69 +102,69 @@ export class OrderHistoryComponent implements OnInit {
 
     {
       headerName: 'Orders Details',
-      children: [
-        {
+      children: [{
           field: "date",
           sortable: true,
           filter: true,
-          cellRenderer: function (params: {value: string;}) {
-    
-            return "<span>" +new Date(params.value) + "</span>" 
+          cellRenderer: (params: {
+            value: string;
+          }) => {
+
+            return "<span>" + this.formatDate(new Date(params.value)) + "</span>"
           }
         },
-    
+
         {
           field: "total",
           sortable: true,
           filter: true,
-          cellRenderer: function (params: {value: string;}) {
-            return '<span><i class="material-icons" style="font-size:17px">euro</i>' + params.value + '</span>'
+          cellRenderer: (params: {
+            value: string;
+          }) => {
+            return '<span>' + this.formatSum(Number(params.value)) + '</span>'
           }
         },
-    
+
         {
           field: "id"
         },
-    
+
         {
           field: "evaded",
           sortable: true,
           filter: true
         },
-    
+
         {
           field: "nations",
           sortable: true,
           filter: true,
-    
-          cellRenderer: function (params: {value: string;}) {
-            let flag = undefined;
-    
-            params.value == 'Spain' ? flag ="es" 
-            : params.value=='Italy' ? flag ="it" 
-              : params.value=='England' ? flag ="gb" 
-                : params.value=='Germany' ? flag ="de" 
-                : params.value=='France' ? flag ="fr" 
-             : params.value=='United States' ? flag ="us" 
-            : undefined;
-    
-            return `<img width="15" height="10" style="margin-bottom: 2px" src="../../../../../../assets/img/custom_img/flags/${flag}.png" />  ` + params.value 
+
+          cellRenderer: (params: {
+            value: string;
+          }) => {
+
+
+            return `<img width="15" height="10" style="margin-bottom: 2px" src="../../../../../../assets/img/custom_img/flags/${this.chooseNationIcon(params.value)}.png" />  ` + params.value
           },
         },
         {
           field: "items",
           sortable: true,
           filter: true,
-          cellRenderer: function (params: {value: string;}) {
+          cellRenderer: (params: {
+            value: string;
+          }) => {
             return params.value.length
           }
-        
+
         }
       ]
-  }
+    }
 
-    
+
   ]
+
 
 
 
